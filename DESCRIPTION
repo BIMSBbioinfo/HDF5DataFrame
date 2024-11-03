@@ -1,16 +1,14 @@
 Package: HDF5DataFrame
-Version: 0.1.0
-Date: 2023-09-12
+Version: 0.0.0
+Date: 2024-03-11
 Title: Bioconductor-friendly Bindings for Parquet
 Description: 
-    Implements bindings for Parquet files that are compatible with Bioconductor
+    Implements bindings for h5 files that are compatible with Bioconductor
     S4 data structures, namely the DataFrame and DelayedArray. This allows 
-    Parquet-derived data to be easily used inside other Bioconductor objects
-    (e.g., SummarizedExperiments) while keeping everything on disk.
+    HDF5-backed data to be easily used as data frames with arbitrary sets of columns
 Authors@R:
     c(
-        person("Artur", "Manukyan", role=c("aut", "cre"), email="artur-man@hotmail.com"),
-        person("Genentech, Inc.", role="cph")
+        person("Artur", "Manukyan", role=c("aut", "cre"), email="artur-man@hotmail.com")
     )
 License: MIT + file LICENSE
 Depends:
@@ -21,11 +19,9 @@ Imports:
     utils,
     methods,
     BiocGenerics,
-    rhdf5
+    rhdf5,
+    HDF5Array
 Suggests:
-    knitr,
-    rmarkdown,
-    BiocStyle,
     testthat
 biocViews: DataRepresentation, Infrastructure, Software
 VignetteBuilder: knitr

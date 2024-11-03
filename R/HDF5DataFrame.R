@@ -2,48 +2,16 @@
 #'
 #' Create a HDF5-backed \linkS4class{DataFrame}, where the data are kept on disk until requested.
 #' 
-#' @param path String containing a path to a Parquet file.
-#' @param columns Character vector containing the names of columns in a Parquet file.
+#' @param tab A set of HDF5Arrays that are the columns of a data frame.
+#' @param name String containing the HDF5 group of the h5 file.
+#' @param columns Character vector containing the names of columns in a  HDF5-based data frame.
 #' If \code{NULL}, this is determined from \code{path}.
-#' @param nrows Integer scalar specifying the number of rows in a Parquet file.
+#' @param nrows Integer scalar specifying the number of rows in a  HDF5-based data frame.
 #' If \code{NULL}, this is determined from \code{path}.
 #'
-#' @return A ParquetDataFrame where each column is a \linkS4class{HDF5ColumnVector}.
+#' @return A HDF5DataFrame where each column is a \linkS4class{HDF5ColumnVector}.
 #'
-#' @details
-#' The HDF5DataFrame is essentially just a \linkS4class{DataFrame} of \linkS4class{HDF5ColumnVector} objects.
-#' It is primarily useful for indicating that the in-memory representation is consistent with the underlying Parquet file
-#' (e.g., no delayed filter/mutate operations have been applied, no data has been added from other files).
-#' Thus, users can specialize code paths for a HDF5DataFrame to operate directly on the underlying Parquet file.
-#' 
-#' In that vein, operations on a HDF5DataFrame may return another HDF5DataFrame if the operation does not introduce inconsistencies with the file-backed data.
-#' For example, slicing or combining by column will return a HDF5DataFrame as the contents of the retained columns are unchanged.
-#' In other cases, the HDF5DataFrame will collapse to a regular \linkS4class{DFrame} of \linkS4class{HDF5ColumnVector} objects before applying the operation;
-#' these are still file-backed but lack the guarantee of file consistency.
-#'
-#' @author Aaron Lun
-#' @examples
-#' # Mocking up a file:
-#' tf <- tempfile()
-#' on.exit(unlink(tf))
-#' arrow::write_parquet(mtcars, tf)
-#'
-#' # Creating our HDF5-backed data frame:
-#' df <- HDF5DataFrame(tf)
-#' df
-#'
-#' # Extraction yields a HDF5ColumnVector:
-#' df$carb
-#'
-#' # Some operations preserve the HDF5DataFrame:
-#' df[,1:5]
-#' combined <- cbind(df, df)
-#' class(combined)
-#'
-#' # ... but most operations collapse to a regular DFrame:
-#' df[1:5,]
-#' combined2 <- cbind(df, some_new_name=df[,1])
-#' class(combined2)
+#' @author Artür Manukyan
 #'
 #' @aliases
 #' HDF5DataFrame-class
@@ -76,7 +44,6 @@
 #' @export
 HDF5DataFrame <- function(tab, name, columns=NULL, nrows=NULL) {
     if (is.null(columns) || is.null(nrows)) {
-        # tab <- acquireTable(path)
         if (is.null(columns)) {
             columns <- names(tab)
         }
@@ -88,6 +55,9 @@ HDF5DataFrame <- function(tab, name, columns=NULL, nrows=NULL) {
     name <- dirname(tab[[1]]@seed@name)
     new("HDF5DataFrame", path=path, name = name, columns=columns, nrows=nrows)
 }
+
+.DollarNames.HDF5DataFrame <- function(x, pattern = "")
+  grep(pattern, x@columns, value=TRUE)
 
 #' @export
 setClass("HDF5DataFrame", contains="DataFrame", slots=c(path="character", name = "character", columns="character", nrows="integer"))
@@ -321,16 +291,14 @@ setMethod("cbind", "HDF5DataFrame", cbind.HDF5DataFrame)
 
 #' @export
 setMethod("as.data.frame", "HDF5DataFrame", function(x, row.names = NULL, optional = FALSE, ...) {
-    tab <- acquireTable(x@path)
-
-    ucol <- unique(x@columns)
-    is.same <- identical(x@columns, ucol)
-    tab <- tab[,ucol]
-
-    output <- as.data.frame(tab, row.names=row.names, optional=optional, ...)
-    output <- output[,match(x@columns,colnames(output)),drop=FALSE]
-
-    output
+  df <- make_zero_col_DFrame(x@nrows)
+  for (i in seq_along(x@columns)) {
+    df[[as.character(i)]] <- HDF5Array::h5mread(filepath = x@path, name = paste0(x@name, "/", x@columns[i]))
+  }
+  colnames(df) <- x@columns
+  mcols(df) <- mcols(x, use.names=FALSE)
+  metadata(df) <- metadata(x)
+  as.data.frame(df)
 })
 
 #' @export
