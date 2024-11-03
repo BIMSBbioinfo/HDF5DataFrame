@@ -27,55 +27,22 @@
 HDF5DataFrame(tab, name, columns = NULL, nrows = NULL)
 }
 \arguments{
-\item{columns}{Character vector containing the names of columns in a Parquet file.
+\item{tab}{A set of HDF5Arrays that are the columns of a data frame.}
+
+\item{name}{String containing the HDF5 group of the h5 file.}
+
+\item{columns}{Character vector containing the names of columns in a  HDF5-based data frame.
 If \code{NULL}, this is determined from \code{path}.}
 
-\item{nrows}{Integer scalar specifying the number of rows in a Parquet file.
+\item{nrows}{Integer scalar specifying the number of rows in a  HDF5-based data frame.
 If \code{NULL}, this is determined from \code{path}.}
-
-\item{path}{String containing a path to a Parquet file.}
 }
 \value{
-A ParquetDataFrame where each column is a \linkS4class{HDF5ColumnVector}.
+A HDF5DataFrame where each column is a \linkS4class{HDF5ColumnVector}.
 }
 \description{
 Create a HDF5-backed \linkS4class{DataFrame}, where the data are kept on disk until requested.
 }
-\details{
-The HDF5DataFrame is essentially just a \linkS4class{DataFrame} of \linkS4class{HDF5ColumnVector} objects.
-It is primarily useful for indicating that the in-memory representation is consistent with the underlying Parquet file
-(e.g., no delayed filter/mutate operations have been applied, no data has been added from other files).
-Thus, users can specialize code paths for a HDF5DataFrame to operate directly on the underlying Parquet file.
-
-In that vein, operations on a HDF5DataFrame may return another HDF5DataFrame if the operation does not introduce inconsistencies with the file-backed data.
-For example, slicing or combining by column will return a HDF5DataFrame as the contents of the retained columns are unchanged.
-In other cases, the HDF5DataFrame will collapse to a regular \linkS4class{DFrame} of \linkS4class{HDF5ColumnVector} objects before applying the operation;
-these are still file-backed but lack the guarantee of file consistency.
-}
-\examples{
-# Mocking up a file:
-tf <- tempfile()
-on.exit(unlink(tf))
-arrow::write_parquet(mtcars, tf)
-
-# Creating our HDF5-backed data frame:
-df <- HDF5DataFrame(tf)
-df
-
-# Extraction yields a HDF5ColumnVector:
-df$carb
-
-# Some operations preserve the HDF5DataFrame:
-df[,1:5]
-combined <- cbind(df, df)
-class(combined)
-
-# ... but most operations collapse to a regular DFrame:
-df[1:5,]
-combined2 <- cbind(df, some_new_name=df[,1])
-class(combined2)
-
-}
 \author{
-Aaron Lun
+Artür Manukyan
 }

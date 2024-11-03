@@ -1,9 +1,10 @@
-#' Column of a Parquet file
+#' Column of an HDF5-based data frame
 #'
-#' Represent a column of a Parquet file as a 1-dimensional \linkS4class{DelayedArray}.
-#' This allows us to use Parquet data inside \linkS4class{DataFrame}s without loading them into memory.
+#' Represent a column of a HDF5-based data frame as a 1-dimensional \linkS4class{DelayedArray}.
+#' This allows us to use HDF5-backed data inside \linkS4class{DataFrame}s without loading them into memory.
 #'
-#' @param path String containing a path to a Parquet file.
+#' @param path String containing a path to a HDF5-based data frame.
+#' @param name String containing the HDF5 group of the h5 file.
 #' @param column String containing the name of the column inside the file.
 #' @param length Integer containing the number of rows.
 #' If \code{NULL}, this is determined by inspecting the file.
@@ -11,31 +12,15 @@
 #' @param type String specifying the type of the data.
 #' If \code{NULL}, this is determined by inspecting the file.
 #' Users may specify this to avoid a look-up, or to coerce the output into a different type.
-#' @param x Either a string containing the path to a Parquet file (to be used as \code{path}),
-#' or an existing ParquetColumnSeed object.
-#' @param ... Further arguments to be passed to the \code{ParquetColumnSeed} constructor.
+#' @param x Either a string containing the path to an HDF5-based data frame file (to be used as \code{path}),
+#' or an existing HDF5ColumnSeed object.
+#' @param ... Further arguments to be passed to the \code{HDF5ColumnSeed} constructor.
 #'
 #' @return For \code{HDF5ColumnSeed}, a HDF5ColumnSeed is returned, obviously.
 #' 
 #' For \code{HDF5ColumnVector}, a HDF5ColumnVector is returned.
 #'
-#' @author Aaron Lun
-#' 
-#' @examples
-#' # Mocking up a file:
-#' tf <- tempfile()
-#' on.exit(unlink(tf))
-#' arrow::write_parquet(mtcars, tf)
-#'
-#' # Creating a vector:
-#' HDF5ColumnVector(tf, column="gear")
-#'
-#' # This happily lives inside DataFrames:
-#' collected <- list()
-#' for (x in colnames(mtcars)) {
-#'     collected[[x]] <- HDF5ColumnVector(tf, column=x)
-#' }
-#' DataFrame(collected)
+#' @author Artür Manukyan
 #'
 #' @aliases
 #' HDF5ColumnSeed-class
@@ -111,7 +96,6 @@ HDF5ColumnSeed <- function(path, name, column, type=NULL, length=NULL) {
             type <- DelayedArray::type(HDF5Array::h5mread(filepath = path, name = paste0(name, "/", column), starts = list(1)))
         }
         if (is.null(length)) {
-            # length <- nrow(tab)
           length <- length(HDF5Array::h5mread(filepath = path, name = paste0(name, "/", column)))
         }
     } 

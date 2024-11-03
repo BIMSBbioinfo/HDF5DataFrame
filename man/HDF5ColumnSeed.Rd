@@ -10,14 +10,16 @@
 \alias{HDF5ColumnVector-class}
 \alias{DelayedArray,HDF5ColumnSeed-method}
 \alias{HDF5ColumnVector}
-\title{Column of a Parquet file}
+\title{Column of an HDF5-based data frame}
 \usage{
 HDF5ColumnSeed(path, name, column, type = NULL, length = NULL)
 
 HDF5ColumnVector(x, ...)
 }
 \arguments{
-\item{path}{String containing a path to a Parquet file.}
+\item{path}{String containing a path to a HDF5-based data frame.}
+
+\item{name}{String containing the HDF5 group of the h5 file.}
 
 \item{column}{String containing the name of the column inside the file.}
 
@@ -29,10 +31,10 @@ Users may specify this to avoid a look-up, or to coerce the output into a differ
 If \code{NULL}, this is determined by inspecting the file.
 This should only be supplied for efficiency purposes, to avoid a file look-up on construction.}
 
-\item{x}{Either a string containing the path to a Parquet file (to be used as \code{path}),
-or an existing ParquetColumnSeed object.}
+\item{x}{Either a string containing the path to an HDF5-based data frame file (to be used as \code{path}),
+or an existing HDF5ColumnSeed object.}
 
-\item{...}{Further arguments to be passed to the \code{ParquetColumnSeed} constructor.}
+\item{...}{Further arguments to be passed to the \code{HDF5ColumnSeed} constructor.}
 }
 \value{
 For \code{HDF5ColumnSeed}, a HDF5ColumnSeed is returned, obviously.
@@ -40,26 +42,9 @@ For \code{HDF5ColumnSeed}, a HDF5ColumnSeed is returned, obviously.
 For \code{HDF5ColumnVector}, a HDF5ColumnVector is returned.
 }
 \description{
-Represent a column of a Parquet file as a 1-dimensional \linkS4class{DelayedArray}.
-This allows us to use Parquet data inside \linkS4class{DataFrame}s without loading them into memory.
-}
-\examples{
-# Mocking up a file:
-tf <- tempfile()
-on.exit(unlink(tf))
-arrow::write_parquet(mtcars, tf)
-
-# Creating a vector:
-HDF5ColumnVector(tf, column="gear")
-
-# This happily lives inside DataFrames:
-collected <- list()
-for (x in colnames(mtcars)) {
-    collected[[x]] <- HDF5ColumnVector(tf, column=x)
-}
-DataFrame(collected)
-
+Represent a column of a HDF5-based data frame as a 1-dimensional \linkS4class{DelayedArray}.
+This allows us to use HDF5-backed data inside \linkS4class{DataFrame}s without loading them into memory.
 }
 \author{
-Aaron Lun
+Artür Manukyan
 }
