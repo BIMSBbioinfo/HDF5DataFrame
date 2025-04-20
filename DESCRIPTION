@@ -12,6 +12,7 @@ Authors@R:
     )
 License: MIT + file LICENSE
 Depends:
+    R (>= 4.5.0),
     DelayedArray,
     S4Vectors
 Imports: 
@@ -20,7 +21,8 @@ Imports:
     methods,
     BiocGenerics,
     rhdf5,
-    HDF5Array
+    HDF5Array,
+    h5mread
 Suggests:
     testthat
 biocViews: DataRepresentation, Infrastructure, Software
