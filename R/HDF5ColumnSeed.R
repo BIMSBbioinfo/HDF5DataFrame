@@ -51,12 +51,12 @@ setMethod("path", "HDF5ColumnSeed", function(object) object@path)
 
 #' @export
 #' @importFrom DelayedArray extract_array
-#' @importFrom HDF5Array h5mread
+#' @importFrom h5mread h5mread
 setMethod("extract_array", "HDF5ColumnSeed", function(x, index) {
     slice <- index[[1]]
-
+   
     if (is.null(slice)) {
-        output <- HDF5Array::h5mread(filepath = x@path, name = paste0(x@name, "/", x@column))
+        output <- h5mread::h5mread(filepath = x@path, name = paste0(x@name, "/", x@column))
     } else if (length(slice) == 0) {
         output <- logical()
     } else {
@@ -73,7 +73,7 @@ setMethod("extract_array", "HDF5ColumnSeed", function(x, index) {
             modified <- TRUE
         }
 
-        output <- HDF5Array::h5mread(filepath = x@path, name = paste0(x@name, "/", x@column), starts = list(slice))
+        output <- h5mread::h5mread(filepath = x@path, name = paste0(x@name, "/", x@column), starts = list(slice))
         if (modified) {
             m <- match(original, slice)
             output <- output[m]
@@ -89,14 +89,15 @@ setMethod("extract_array", "HDF5ColumnSeed", function(x, index) {
 
 #' @export
 #' @rdname HDF5ColumnSeed
+#' @importFrom h5mread h5mread
 #' @importFrom DelayedArray type
 HDF5ColumnSeed <- function(path, name, column, type=NULL, length=NULL) {
     if (is.null(type) || is.null(length)) {
         if (is.null(type)){ 
-            type <- DelayedArray::type(HDF5Array::h5mread(filepath = path, name = paste0(name, "/", column), starts = list(1)))
+            type <- DelayedArray::type(h5mread::h5mread(filepath = path, name = paste0(name, "/", column), starts = list(1)))
         }
         if (is.null(length)) {
-          length <- length(HDF5Array::h5mread(filepath = path, name = paste0(name, "/", column)))
+          length <- length(h5mread::h5mread(filepath = path, name = paste0(name, "/", column)))
         }
     } 
     # print(type)

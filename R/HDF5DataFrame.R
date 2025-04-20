@@ -289,11 +289,12 @@ setMethod("cbind", "HDF5DataFrame", cbind.HDF5DataFrame)
     df
 }
 
+#' @importFrom h5mread h5mread
 #' @export
 setMethod("as.data.frame", "HDF5DataFrame", function(x, row.names = NULL, optional = FALSE, ...) {
   df <- make_zero_col_DFrame(x@nrows)
   for (i in seq_along(x@columns)) {
-    df[[as.character(i)]] <- HDF5Array::h5mread(filepath = x@path, name = paste0(x@name, "/", x@columns[i]))
+    df[[as.character(i)]] <- h5mread::h5mread(filepath = x@path, name = paste0(x@name, "/", x@columns[i]))
   }
   colnames(df) <- x@columns
   mcols(df) <- mcols(x, use.names=FALSE)
