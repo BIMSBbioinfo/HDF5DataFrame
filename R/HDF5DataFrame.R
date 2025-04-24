@@ -1,46 +1,72 @@
 #' HDF5-backed DataFrame
 #'
-#' Create a HDF5-backed \linkS4class{DataFrame}, where the data are kept on disk until requested.
+#' Create a HDF5-backed \linkS4class{DataFrame}, where the data are 
+#' kept on disk until requested.
 #' 
-#' @param tab A set of HDF5Arrays that are the columns of a data frame.
+#' @param tab A set of HDF5Arrays that are the columns of the HDF5DataFrame 
+#' object.
 #' @param name String containing the HDF5 group of the h5 file.
-#' @param columns Character vector containing the names of columns in a  HDF5-based data frame.
-#' If \code{NULL}, this is determined from \code{path}.
-#' @param nrows Integer scalar specifying the number of rows in a  HDF5-based data frame.
-#' If \code{NULL}, this is determined from \code{path}.
+#' @param columns Character vector containing the names of columns in a  
+#' HDF5-based data frame. If \code{NULL}, this is determined from \code{path}.
+#' @param nrows Integer scalar specifying the number of rows in a  HDF5-based 
+#' data frame. If \code{NULL}, this is determined from \code{path}.
 #'
-#' @return A HDF5DataFrame where each column is a \linkS4class{HDF5ColumnVector}.
+#' @importFrom methods new as is callNextMethod
+#' @importFrom DelayedArray path
+#' @return A HDF5DataFrame where each column is a 
+#' \linkS4class{HDF5ColumnVector}.
 #'
 #' @author Artür Manukyan
 #'
-#' @aliases
-#' HDF5DataFrame-class
-#'
-#' nrow,HDF5DataFrame-method
-#' ncol,HDF5DataFrame-method
+#' @name HDF5DataFrame
+#' 
+#' @aliases 
+#' 
+#' as.data.frame,HDF5DataFrame-method
 #' length,HDF5DataFrame-method
 #' path,HDF5DataFrame-method
-#'
-#' rownames,HDF5DataFrame-method
-#' names,HDF5DataFrame-method
-#' rownames<-,HDF5DataFrame-method
-#' names<-,HDF5DataFrame-method
-#'
-#' extractROWS,HDF5DataFrame,ANY-method
-#' extractCOLS,HDF5DataFrame-method
-#' [[,HDF5DataFrame-method
-#'
-#' replaceROWS,HDF5DataFrame-method
-#' replaceCOLS,HDF5DataFrame-method
-#' normalizeSingleBracketReplacementValue,HDF5DataFrame-method
-#' [[<-,HDF5DataFrame-method
-#'
 #' cbind,HDF5DataFrame-method
-#' cbind.HDF5DataFrame
-#'
-#' as.data.frame,HDF5DataFrame-method
-#' coerce,HDF5DataFrame,DFrame-method
-#'
+#' 
+#' rownames,HDF5DataFrame-method
+#' rownames<-,HDF5DataFrame-method
+#' 
+#' names,HDF5DataFrame-method
+#' names<-,HDF5DataFrame-method
+#' 
+#' [[,HDF5DataFrame-method
+#' [[<-,HDF5DataFrame-method
+#' 
+#' @examples
+#' # h5
+#' library(rhdf5)
+#' output_h5ad <- tempfile(fileext = ".h5")
+#' rhdf5::h5createFile(output_h5ad)
+#' rhdf5::h5createGroup(output_h5ad, group = "assay")
+#' 
+#' # data
+#' data("chickwts")
+#' metadata <- chickwts
+#' 
+#' # set metadata
+#' meta.data_list <- list()
+#' for(i in 1:ncol(metadata)){
+#'   cur_column <- as.vector(subset(metadata, 
+#'                                  select = colnames(metadata)[i]))[[1]]
+#'   if(is.character(cur_column) || is.factor(cur_column))
+#'     cur_column <- as.character(cur_column)
+#'   cur_column <- as.array(cur_column)
+#'   meta.data_list[[colnames(metadata)[i]]] <- 
+#'     HDF5Array::writeHDF5Array(cur_column, 
+#'                               output_h5ad, 
+#'                               name = paste0("assay", "/", 
+#'                                             colnames(metadata)[i]), 
+#'                               with.dimnames = FALSE) 
+#' }
+#' metadata_large <- 
+#'   HDF5DataFrame::HDF5DataFrame(meta.data_list, 
+#'                                name = "assay", 
+#'                                columns = names(meta.data_list))
+#' 
 #' @export
 HDF5DataFrame <- function(tab, name, columns=NULL, nrows=NULL) {
     if (is.null(columns) || is.null(nrows)) {
@@ -53,14 +79,11 @@ HDF5DataFrame <- function(tab, name, columns=NULL, nrows=NULL) {
     } 
     path <- DelayedArray::path(tab[[1]])
     name <- dirname(tab[[1]]@seed@name)
-    new("HDF5DataFrame", path=path, name = name, columns=columns, nrows=nrows)
+    methods::new("HDF5DataFrame", path=path, name = name, columns=columns, nrows=nrows)
 }
 
 .DollarNames.HDF5DataFrame <- function(x, pattern = "")
   grep(pattern, x@columns, value=TRUE)
-
-#' @export
-setClass("HDF5DataFrame", contains="DataFrame", slots=c(path="character", name = "character", columns="character", nrows="integer"))
 
 #' @export
 setMethod("nrow", "HDF5DataFrame", function(x) x@nrows)
@@ -123,11 +146,13 @@ setMethod("extractCOLS", "HDF5DataFrame", function(x, i) {
 #' @importFrom S4Vectors normalizeDoubleBracketSubscript
 setMethod("[[", "HDF5DataFrame", function(x, i, j, ...) {
     if (!missing(j)) {
-        stop("list-style indexing of a HDF5DataFrame with non-missing 'j' is not supported")
+        stop("list-style indexing of a HDF5DataFrame", 
+             " with non-missing 'j' is not supported")
     }
 
     if (missing(i) || length(i) != 1L) {
-        stop("expected a length-1 'i' for list-style indexing of a HDF5DataFrame")
+        stop("expected a length-1 'i' for list-style ", 
+             "indexing of a HDF5DataFrame")
     }
 
     i <- normalizeDoubleBracketSubscript(i, x)
@@ -141,13 +166,17 @@ setMethod("replaceROWS", "HDF5DataFrame", function(x, i, value) {
     replaceROWS(x, i, value)
 })
 
-#' @export
 #' @importFrom S4Vectors normalizeSingleBracketReplacementValue
-setMethod("normalizeSingleBracketReplacementValue", "HDF5DataFrame", function(value, x) {
-    if (is(value, "HDF5ColumnVector")) {
-        return(new("HDF5DataFrame", path=value@seed@path, columns=value@seed@column, nrows=length(value)))
+setMethod("normalizeSingleBracketReplacementValue",
+          "HDF5DataFrame", 
+          function(value, x) {
+    if (methods::is(value, "HDF5ColumnVector")) {
+        return(methods::new("HDF5DataFrame", 
+                   path=value@seed@path, 
+                   columns=value@seed@column, 
+                   nrows=length(value)))
     }
-    callNextMethod()
+    methods::callNextMethod()
 })
 
 #' @export
@@ -157,8 +186,9 @@ setMethod("replaceCOLS", "HDF5DataFrame", function(x, i, value) {
     xstub <- setNames(seq_along(x), names(x))
     i2 <- normalizeSingleBracketSubscript(i, xstub, allow.NAs=TRUE)
     if (length(i2) == 1L && !is.na(i2)) {
-        if (is(value, "HDF5DataFrame")) {
-            if (x@path == value@path && identical(x@columns[i2], value@columns)) {
+        if (methods::is(value, "HDF5DataFrame")) {
+            if (x@path == value@path && 
+                identical(x@columns[i2], value@columns)) {
                 return(x)
             }
         }
@@ -171,13 +201,13 @@ setMethod("replaceCOLS", "HDF5DataFrame", function(x, i, value) {
     replaceCOLS(x, i, value)
 })
 
-#' @export
 #' @importFrom S4Vectors normalizeDoubleBracketSubscript
 setMethod("[[<-", "HDF5DataFrame", function(x, i, j, ..., value) {
     i2 <- normalizeDoubleBracketSubscript(i, x, allow.nomatch=TRUE)
     if (length(i2) == 1L && !is.na(i2)) {
-        if (is(value, "HDF5ColumnVector")) {
-            if (x@path == value@seed@path && x@columns[i2] == value@seed@column) {
+        if (methods::is(value, "HDF5ColumnVector")) {
+            if (x@path == value@seed@path && 
+                x@columns[i2] == value@seed@column) {
                 return(x)
             }
         }
@@ -198,7 +228,7 @@ cbind.HDF5DataFrame <- function(..., deparse.level=1) {
 
     for (i in seq_along(objects)) {
         obj <- objects[[i]]
-        if (is(obj, "HDF5DataFrame")) {
+        if (methods::is(obj, "HDF5DataFrame")) {
             if (is.null(xpath)) {
                 xpath <- obj@path
             } else if (obj@path != xpath) {
@@ -207,10 +237,12 @@ cbind.HDF5DataFrame <- function(..., deparse.level=1) {
             } 
             all_columns <- c(all_columns, obj@columns)
 
-        } else if (is(obj, "HDF5ColumnVector")) {
+        } else if (methods::is(obj, "HDF5ColumnVector")) {
             if (is.null(xpath)) {
                 xpath <- obj@seed@path
-            } else if (obj@seed@path != xpath || !identical(names(objects)[i], obj@seed@column)) {
+            } else if (obj@seed@path != xpath || 
+                       !identical(names(objects)[i], 
+                                  obj@seed@column)) {
                 preserved <- FALSE
                 break
             } 
@@ -225,7 +257,7 @@ cbind.HDF5DataFrame <- function(..., deparse.level=1) {
     if (!preserved) {
         for (i in seq_along(objects)) {
             obj <- objects[[i]]
-            if (is(obj, "HDF5DataFrame")) {
+            if (methods::is(obj, "HDF5DataFrame")) {
                 objects[[i]] <- .collapse_to_df(obj)
             }
         }
@@ -241,7 +273,7 @@ cbind.HDF5DataFrame <- function(..., deparse.level=1) {
 
             mc <- NULL
             md <- list()
-            if (is(obj, "DataFrame")) {
+            if (methods::is(obj, "DataFrame")) {
                 mc <- mcols(obj, use.names=FALSE)
                 md <- metadata(obj)
                 if (is.null(mc)) {
@@ -263,7 +295,7 @@ cbind.HDF5DataFrame <- function(..., deparse.level=1) {
             all_mcols <- NULL
         }
 
-        new("HDF5DataFrame", 
+        methods::new("HDF5DataFrame", 
             path=xpath,
             columns=all_columns,
             nrows=NROW(objects[[1]]),
@@ -277,11 +309,16 @@ cbind.HDF5DataFrame <- function(..., deparse.level=1) {
 #' @importFrom S4Vectors bindCOLS
 setMethod("cbind", "HDF5DataFrame", cbind.HDF5DataFrame)
 
-#' @importFrom S4Vectors make_zero_col_DFrame mcols mcols<- metadata metadata<-
+#' @importFrom S4Vectors make_zero_col_DFrame 
+#' @importFrom S4Vectors mcols mcols<- metadata metadata<-
 .collapse_to_df <- function(x) {
     df <- make_zero_col_DFrame(x@nrows)
     for (i in seq_along(x@columns)) {
-        df[[as.character(i)]] <- HDF5ColumnVector(x@path, x@name, column=x@columns[i], length = x@nrows)
+        df[[as.character(i)]] <- 
+          HDF5ColumnVector(x@path, 
+                           x@name, 
+                           column=x@columns[i], 
+                           length = x@nrows)
     }
     colnames(df) <- x@columns
     mcols(df) <- mcols(x, use.names=FALSE)
@@ -291,10 +328,14 @@ setMethod("cbind", "HDF5DataFrame", cbind.HDF5DataFrame)
 
 #' @importFrom h5mread h5mread
 #' @export
-setMethod("as.data.frame", "HDF5DataFrame", function(x, row.names = NULL, optional = FALSE, ...) {
+setMethod("as.data.frame", 
+          "HDF5DataFrame", 
+          function(x, row.names = NULL, optional = FALSE, ...) {
   df <- make_zero_col_DFrame(x@nrows)
   for (i in seq_along(x@columns)) {
-    df[[as.character(i)]] <- h5mread::h5mread(filepath = x@path, name = paste0(x@name, "/", x@columns[i]))
+    df[[as.character(i)]] <- 
+      h5mread::h5mread(filepath = x@path, 
+                       name = paste0(x@name, "/", x@columns[i]))
   }
   colnames(df) <- x@columns
   mcols(df) <- mcols(x, use.names=FALSE)
@@ -304,4 +345,3 @@ setMethod("as.data.frame", "HDF5DataFrame", function(x, row.names = NULL, option
 
 #' @export
 setAs("HDF5DataFrame", "DFrame", function(from) .collapse_to_df(from))
-

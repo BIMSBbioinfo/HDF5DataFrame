@@ -1,15 +1,17 @@
 Package: HDF5DataFrame
-Version: 0.0.0
-Date: 2024-03-11
-Title: Bioconductor-friendly Bindings for Parquet
+Version: 0.99.1
+Date: 2025-04-23
+Title: HDF5-backed DataFrame objects and methods
 Description: 
     Implements bindings for h5 files that are compatible with Bioconductor
     S4 data structures, namely the DataFrame and DelayedArray. This allows 
-    HDF5-backed data to be easily used as data frames with arbitrary sets of columns
-Authors@R:
-    c(
-        person("Artur", "Manukyan", role=c("aut", "cre"), email="artur-man@hotmail.com")
-    )
+    HDF5-backed data to be easily used as data frames with arbitrary sets 
+    of columns.
+Authors@R: 
+	person("Artür", "Manukyan", 
+		     role=c("aut", "cre", "fnd"),
+	       email="artur-man@hotmail.com", 
+	       comment=c(ORCID="0000-0002-0441-9517"))
 License: MIT + file LICENSE
 Depends:
     R (>= 4.5.0),
@@ -17,15 +19,15 @@ Depends:
     S4Vectors
 Imports: 
     stats,
-    utils,
     methods,
     BiocGenerics,
-    rhdf5,
-    HDF5Array,
     h5mread
 Suggests:
-    testthat
+    testthat,
+    knitr
 biocViews: DataRepresentation, Infrastructure, Software
 VignetteBuilder: knitr
 RoxygenNote: 7.3.2
 Encoding: UTF-8
+URL: https://github.com/BIMSBbioinfo/HDF5DataFrame
+BugReports: https://github.com/BIMSBbioinfo/HDF5DataFrame/issues

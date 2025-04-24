@@ -2,46 +2,71 @@
 % Please edit documentation in R/HDF5DataFrame.R
 \name{HDF5DataFrame}
 \alias{HDF5DataFrame}
-\alias{HDF5DataFrame-class}
-\alias{nrow,HDF5DataFrame-method}
-\alias{ncol,HDF5DataFrame-method}
+\alias{as.data.frame,HDF5DataFrame-method}
 \alias{length,HDF5DataFrame-method}
 \alias{path,HDF5DataFrame-method}
-\alias{rownames,HDF5DataFrame-method}
-\alias{names,HDF5DataFrame-method}
-\alias{rownames<-,HDF5DataFrame-method}
-\alias{names<-,HDF5DataFrame-method}
-\alias{extractROWS,HDF5DataFrame,ANY-method}
-\alias{extractCOLS,HDF5DataFrame-method}
-\alias{[[,HDF5DataFrame-method}
-\alias{replaceROWS,HDF5DataFrame-method}
-\alias{replaceCOLS,HDF5DataFrame-method}
-\alias{normalizeSingleBracketReplacementValue,HDF5DataFrame-method}
-\alias{[[<-,HDF5DataFrame-method}
 \alias{cbind,HDF5DataFrame-method}
-\alias{cbind.HDF5DataFrame}
-\alias{as.data.frame,HDF5DataFrame-method}
-\alias{coerce,HDF5DataFrame,DFrame-method}
+\alias{rownames,HDF5DataFrame-method}
+\alias{rownames<-,HDF5DataFrame-method}
+\alias{names,HDF5DataFrame-method}
+\alias{names<-,HDF5DataFrame-method}
+\alias{[[,HDF5DataFrame-method}
+\alias{[[<-,HDF5DataFrame-method}
 \title{HDF5-backed DataFrame}
 \usage{
 HDF5DataFrame(tab, name, columns = NULL, nrows = NULL)
 }
 \arguments{
-\item{tab}{A set of HDF5Arrays that are the columns of a data frame.}
+\item{tab}{A set of HDF5Arrays that are the columns of the HDF5DataFrame 
+object.}
 
 \item{name}{String containing the HDF5 group of the h5 file.}
 
-\item{columns}{Character vector containing the names of columns in a  HDF5-based data frame.
-If \code{NULL}, this is determined from \code{path}.}
+\item{columns}{Character vector containing the names of columns in a
+HDF5-based data frame. If \code{NULL}, this is determined from \code{path}.}
 
-\item{nrows}{Integer scalar specifying the number of rows in a  HDF5-based data frame.
-If \code{NULL}, this is determined from \code{path}.}
+\item{nrows}{Integer scalar specifying the number of rows in a  HDF5-based 
+data frame. If \code{NULL}, this is determined from \code{path}.}
 }
 \value{
-A HDF5DataFrame where each column is a \linkS4class{HDF5ColumnVector}.
+A HDF5DataFrame where each column is a 
+\linkS4class{HDF5ColumnVector}.
 }
 \description{
-Create a HDF5-backed \linkS4class{DataFrame}, where the data are kept on disk until requested.
+Create a HDF5-backed \linkS4class{DataFrame}, where the data are 
+kept on disk until requested.
+}
+\examples{
+# h5
+library(rhdf5)
+output_h5ad <- tempfile(fileext = ".h5")
+rhdf5::h5createFile(output_h5ad)
+rhdf5::h5createGroup(output_h5ad, group = "assay")
+
+# data
+data("chickwts")
+metadata <- chickwts
+
+# set metadata
+meta.data_list <- list()
+for(i in 1:ncol(metadata)){
+  cur_column <- as.vector(subset(metadata, 
+                                 select = colnames(metadata)[i]))[[1]]
+  if(is.character(cur_column) || is.factor(cur_column))
+    cur_column <- as.character(cur_column)
+  cur_column <- as.array(cur_column)
+  meta.data_list[[colnames(metadata)[i]]] <- 
+    HDF5Array::writeHDF5Array(cur_column, 
+                              output_h5ad, 
+                              name = paste0("assay", "/", 
+                                            colnames(metadata)[i]), 
+                              with.dimnames = FALSE) 
+}
+metadata_large <- 
+  HDF5DataFrame::HDF5DataFrame(meta.data_list, 
+                               name = "assay", 
+                               columns = names(meta.data_list))
+
 }
 \author{
 Artür Manukyan
