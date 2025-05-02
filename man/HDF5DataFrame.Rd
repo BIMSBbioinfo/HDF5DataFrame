@@ -30,15 +30,19 @@ data frame. If \code{NULL}, this is determined from \code{path}.}
 }
 \value{
 A HDF5DataFrame where each column is a 
-\linkS4class{HDF5ColumnVector}.
+\link[HDF5ColumnVector-class]{HDF5ColumnVector}.
 }
 \description{
-Create a HDF5-backed \linkS4class{DataFrame}, where the data are 
+Create a HDF5-backed \link[S4Vectors]{DataFrame}, where the data are 
 kept on disk until requested.
 }
 \examples{
-# h5
+# libraries
 library(rhdf5)
+library(HDF5Array)
+library(HDF5DataFrame)
+
+# h5
 output_h5ad <- tempfile(fileext = ".h5")
 rhdf5::h5createFile(output_h5ad)
 rhdf5::h5createGroup(output_h5ad, group = "assay")
@@ -56,16 +60,16 @@ for(i in 1:ncol(metadata)){
     cur_column <- as.character(cur_column)
   cur_column <- as.array(cur_column)
   meta.data_list[[colnames(metadata)[i]]] <- 
-    HDF5Array::writeHDF5Array(cur_column, 
-                              output_h5ad, 
-                              name = paste0("assay", "/", 
-                                            colnames(metadata)[i]), 
-                              with.dimnames = FALSE) 
+    writeHDF5Array(cur_column, 
+                   output_h5ad, 
+                   name = paste0("assay", "/", 
+                                 colnames(metadata)[i]), 
+                   with.dimnames = FALSE)
 }
 metadata_large <- 
-  HDF5DataFrame::HDF5DataFrame(meta.data_list, 
-                               name = "assay", 
-                               columns = names(meta.data_list))
+  HDF5DataFrame(meta.data_list,
+                name = "assay", 
+                columns = names(meta.data_list))
 
 }
 \author{

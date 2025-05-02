@@ -1,6 +1,6 @@
 #' HDF5-backed DataFrame
 #'
-#' Create a HDF5-backed \linkS4class{DataFrame}, where the data are 
+#' Create a HDF5-backed \link[S4Vectors]{DataFrame}, where the data are 
 #' kept on disk until requested.
 #' 
 #' @param tab A set of HDF5Arrays that are the columns of the HDF5DataFrame 
@@ -14,14 +14,13 @@
 #' @importFrom methods new as is callNextMethod
 #' @importFrom DelayedArray path
 #' @return A HDF5DataFrame where each column is a 
-#' \linkS4class{HDF5ColumnVector}.
+#' \link[HDF5ColumnVector-class]{HDF5ColumnVector}.
 #'
 #' @author Artür Manukyan
 #'
 #' @name HDF5DataFrame
 #' 
 #' @aliases 
-#' 
 #' as.data.frame,HDF5DataFrame-method
 #' length,HDF5DataFrame-method
 #' path,HDF5DataFrame-method
@@ -37,8 +36,12 @@
 #' [[<-,HDF5DataFrame-method
 #' 
 #' @examples
-#' # h5
+#' # libraries
 #' library(rhdf5)
+#' library(HDF5Array)
+#' library(HDF5DataFrame)
+#' 
+#' # h5
 #' output_h5ad <- tempfile(fileext = ".h5")
 #' rhdf5::h5createFile(output_h5ad)
 #' rhdf5::h5createGroup(output_h5ad, group = "assay")
@@ -56,16 +59,16 @@
 #'     cur_column <- as.character(cur_column)
 #'   cur_column <- as.array(cur_column)
 #'   meta.data_list[[colnames(metadata)[i]]] <- 
-#'     HDF5Array::writeHDF5Array(cur_column, 
-#'                               output_h5ad, 
-#'                               name = paste0("assay", "/", 
-#'                                             colnames(metadata)[i]), 
-#'                               with.dimnames = FALSE) 
+#'     writeHDF5Array(cur_column, 
+#'                    output_h5ad, 
+#'                    name = paste0("assay", "/", 
+#'                                  colnames(metadata)[i]), 
+#'                    with.dimnames = FALSE)
 #' }
 #' metadata_large <- 
-#'   HDF5DataFrame::HDF5DataFrame(meta.data_list, 
-#'                                name = "assay", 
-#'                                columns = names(meta.data_list))
+#'   HDF5DataFrame(meta.data_list,
+#'                 name = "assay", 
+#'                 columns = names(meta.data_list))
 #' 
 #' @export
 HDF5DataFrame <- function(tab, name, columns=NULL, nrows=NULL) {
@@ -79,7 +82,11 @@ HDF5DataFrame <- function(tab, name, columns=NULL, nrows=NULL) {
     } 
     path <- DelayedArray::path(tab[[1]])
     name <- dirname(tab[[1]]@seed@name)
-    methods::new("HDF5DataFrame", path=path, name = name, columns=columns, nrows=nrows)
+    methods::new("HDF5DataFrame", 
+                 path=path, 
+                 name = name, 
+                 columns=columns, 
+                 nrows=nrows)
 }
 
 .DollarNames.HDF5DataFrame <- function(x, pattern = "")

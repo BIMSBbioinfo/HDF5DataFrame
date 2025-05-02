@@ -1,3 +1,8 @@
+# library
+library(rhdf5)
+library(HDF5Array)
+library(HDF5DataFrame)
+
 # h5
 output_h5ad <- tempfile(fileext = ".h5")
 
@@ -9,16 +14,12 @@ names(metadata2) <- paste0("new", names(metadata2))
 
 test_that("create metadata", {
   
-  # library
-  library(rhdf5)
-  library(HDF5Array)
-  
   # open h5ad
-  rhdf5::h5createFile(output_h5ad)
+  h5createFile(output_h5ad)
 
   # set metadata
   meta.data_list <- list()
-  rhdf5::h5createGroup(output_h5ad, group = "assay")
+  h5createGroup(output_h5ad, group = "assay")
   for(i in 1:ncol(metadata)){
     cur_column <- as.vector(subset(metadata, 
                                    select = colnames(metadata)[i]))[[1]]
@@ -26,16 +27,16 @@ test_that("create metadata", {
       cur_column <- as.character(cur_column)
     cur_column <- as.array(cur_column)
     meta.data_list[[colnames(metadata)[i]]] <- 
-      HDF5Array::writeHDF5Array(cur_column, 
-                                output_h5ad, 
-                                name = paste0("assay", "/", 
-                                              colnames(metadata)[i]), 
-                                with.dimnames = FALSE) 
+      writeHDF5Array(cur_column, 
+                     output_h5ad, 
+                     name = paste0("assay", "/", 
+                                   colnames(metadata)[i]), 
+                     with.dimnames = FALSE)
   }
   metadata_large <- 
-    HDF5DataFrame::HDF5DataFrame(meta.data_list, 
-                                 name = "assay", 
-                                 columns = names(meta.data_list))
+    HDF5DataFrame(meta.data_list, 
+                  name = "assay", 
+                  columns = names(meta.data_list))
   
   # check functions
   expect_equal(dim(metadata_large), dim(metadata))
@@ -67,7 +68,7 @@ test_that("create metadata", {
   
   # set new metadata
   meta.data_list <- list()
-  rhdf5::h5createGroup(output_h5ad, group = "assay2")
+  h5createGroup(output_h5ad, group = "assay2")
   for(i in 1:ncol(metadata2)){
     cur_column <- as.vector(subset(metadata2, 
                                    select = colnames(metadata2)[i]))[[1]]
@@ -75,16 +76,16 @@ test_that("create metadata", {
       cur_column <- as.character(cur_column)
     cur_column <- as.array(cur_column)
     meta.data_list[[colnames(metadata)[i]]] <- 
-      HDF5Array::writeHDF5Array(cur_column, 
-                                output_h5ad, 
-                                name = paste0("assay2", "/", 
-                                              colnames(metadata)[i]), 
-                                with.dimnames = FALSE) 
+      writeHDF5Array(cur_column, 
+                     output_h5ad, 
+                     name = paste0("assay2", "/", 
+                                   colnames(metadata)[i]), 
+                     with.dimnames = FALSE) 
   }
   metadata2_large <- 
-    HDF5DataFrame::HDF5DataFrame(meta.data_list, 
-                                 name = "assay2", 
-                                 columns = names(meta.data_list))
+    HDF5DataFrame(meta.data_list, 
+                  name = "assay2", 
+                  columns = names(meta.data_list))
 
   # merge with in memory metadata
   metadata3 <- cbind(metadata_large, metadata2_large)

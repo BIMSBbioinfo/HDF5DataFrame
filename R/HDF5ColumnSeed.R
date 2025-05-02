@@ -1,8 +1,8 @@
 #' Column of an HDF5-based data frame
 #'
 #' Represent a column of a HDF5-based data frame as a 1-dimensional 
-#' \linkS4class{DelayedArray}. This allows us to use HDF5-backed data 
-#' inside \linkS4class{DataFrame} without loading them into memory.
+#' \link[DelayedArray]{DelayedArray}. This allows us to use HDF5-backed data 
+#' inside \link[S4Vectors]{DataFrame} without loading them into memory.
 #'
 #' @param path String containing a path to a HDF5-based data frame.
 #' @param name String containing the HDF5 group of the h5 file.

@@ -10,10 +10,10 @@
 
 \item{name}{The name of the dataset in the HDF5 file.}
 
-\item{column}{the names of the columns, see \linkS4class{HDF5ColumnVector}}
+\item{column}{the names of the columns, see \link[HDF5ColumnVector-class]{HDF5ColumnVector}}
 
-\item{length}{the length of the \linkS4class{HDF5Array}.}
+\item{length}{the length of the \link[HDF5Array]{HDF5Array}.}
 }
 \description{
-The HDF5ColumnSeed class for \linkS4class{HDF5ColumnVector}.
+The HDF5ColumnSeed class for \link[HDF5ColumnVector-class]{HDF5ColumnVector}.
 }

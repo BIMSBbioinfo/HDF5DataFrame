@@ -5,9 +5,9 @@
 \alias{HDF5ColumnVector-class}
 \title{HDF5ColumnVector Class}
 \arguments{
-\item{seed}{An \linkS4class{HDF5ColumnSeed} object}
+\item{seed}{An \link[HDF5ColumnSeed-class]{HDF5ColumnSeed} object}
 }
 \description{
-The HDF5ColumnVector class for each column of a \linkS4class{HDF5DataFrame} 
+The HDF5ColumnVector class for each column of a \link[HDF5DataFrame-class]{HDF5DataFrame} 
 class
 }
