@@ -1,0 +1,73 @@
+
+---
+title: "`HDF5DataFrame`"
+date: "`r format(Sys.Date(), '%B %d, %Y')`"
+package: "`r BiocStyle::pkg_ver('HDF5DataFrame')`"
+author: 
+  - name: Artur Manukyan
+output:
+  BiocStyle::html_document
+vignette: |
+  %\VignetteIndexEntry{HDF5DataFrame}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(cache=FALSE, message=FALSE, warning=FALSE)
+```
+
+# Introduction
+
+HDF5-backed DataFrame objects and methods. 
+
+```{r load-libs}
+library(rhdf5)
+library(HDF5Array)
+library(HDF5DataFrame)
+```
+
+# Usage
+
+The main usage of the HDF5DataFrame is to deliver DelayedArray 
+operations for DataFrames
+
+```{r read}
+
+# create h5 and a group for the hdf5 backed data frames
+output_h5ad <- tempfile(fileext = ".h5")
+h5createFile(output_h5ad)
+h5createGroup(output_h5ad, group = "assay")
+
+# data
+data("chickwts")
+metadata <- chickwts
+
+# create metadata
+meta.data_list <- list()
+for(i in 1:ncol(metadata)){
+  cur_column <- as.vector(subset(metadata, 
+                                 select = colnames(metadata)[i]))[[1]]
+  if(is.character(cur_column) || is.factor(cur_column))
+    cur_column <- as.character(cur_column)
+  cur_column <- as.array(cur_column)
+  meta.data_list[[colnames(metadata)[i]]] <- 
+    writeHDF5Array(cur_column,
+                   output_h5ad, 
+                   name = paste0("assay", "/", 
+                                 colnames(metadata)[i]), 
+                   with.dimnames = FALSE) 
+}
+
+# create HDF5DataFrame
+metadata_large <- 
+  HDF5DataFrame(meta.data_list, 
+                name = "assay",
+                columns = names(meta.data_list))
+```
+
+# Session info
+
+```{r sessionInfo, echo=FALSE}
+sessionInfo()
+```
