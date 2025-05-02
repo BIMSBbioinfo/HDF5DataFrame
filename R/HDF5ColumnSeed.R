@@ -17,7 +17,7 @@
 #' into a different type.
 #' @param x Either a string containing the path to an HDF5-based data frame 
 #' file (to be used as \code{path}), or an existing HDF5ColumnSeed object.
-#' @param seed A HDF5ColumnSeed object
+#' @param seed,object  A HDF5ColumnSeed object
 #' @param ... Further arguments to be passed to the \code{HDF5ColumnSeed} 
 #' constructor.
 #'
@@ -35,16 +35,61 @@
 NULL
 
 #' @export
+#' @rdname HDF5ColumnSeed
+#' @importFrom h5mread h5mread
+#' @importFrom DelayedArray type
+HDF5ColumnSeed <- function(path, name, column, type=NULL, length=NULL) {
+  if (is.null(type) || is.null(length)) {
+    if (is.null(type)){ 
+      type <- DelayedArray::type(
+        h5mread::h5mread(filepath = path, 
+                         name = paste0(name, "/", column), 
+                         starts = list(1)))
+    }
+    if (is.null(length)) {
+      length <- length(h5mread::h5mread(filepath = path, 
+                                        name = paste0(name, "/", column)))
+    }
+  } 
+  methods::new("HDF5ColumnSeed", 
+               path=path, 
+               name=name, 
+               column=column, 
+               length=length, 
+               type=type)
+}
+
+#' @export
+#' @rdname HDF5ColumnSeed
+HDF5ColumnVector <- function(x, ...) {
+  if (!methods::is(x, "HDF5ColumnSeed")) {
+    x <- HDF5ColumnSeed(x, ...)
+  }
+  methods::new("HDF5ColumnVector", seed=x)
+}
+
+#' @export
+#' @rdname HDF5ColumnSeed
+#' @importFrom DelayedArray DelayedArray
+setMethod("DelayedArray", 
+          "HDF5ColumnSeed", 
+          function(seed) HDF5ColumnVector(seed))
+
+#' @rdname HDF5ColumnSeed  
+#' @export
 setMethod("dim", "HDF5ColumnSeed", function(x) x@length)
 
+#' @rdname HDF5ColumnSeed
 #' @export
 #' @importFrom DelayedArray type
 setMethod("type", "HDF5ColumnSeed", function(x) x@type)
 
+#' @rdname HDF5ColumnSeed
 #' @export
 #' @importFrom BiocGenerics path
 setMethod("path", "HDF5ColumnSeed", function(object) object@path)
 
+#' @rdname HDF5ColumnSeed
 #' @export
 #' @importFrom DelayedArray extract_array
 #' @importFrom h5mread h5mread
@@ -85,44 +130,3 @@ setMethod("extract_array", "HDF5ColumnSeed", function(x, index) {
 
     array(output)
 })
-
-#' @export
-#' @rdname HDF5ColumnSeed
-#' @importFrom h5mread h5mread
-#' @importFrom DelayedArray type
-HDF5ColumnSeed <- function(path, name, column, type=NULL, length=NULL) {
-    if (is.null(type) || is.null(length)) {
-        if (is.null(type)){ 
-            type <- DelayedArray::type(
-              h5mread::h5mread(filepath = path, 
-                               name = paste0(name, "/", column), 
-                               starts = list(1)))
-        }
-        if (is.null(length)) {
-          length <- length(h5mread::h5mread(filepath = path, 
-                                            name = paste0(name, "/", column)))
-        }
-    } 
-    methods::new("HDF5ColumnSeed", 
-        path=path, 
-        name=name, 
-        column=column, 
-        length=length, 
-        type=type)
-}
-
-#' @export
-#' @rdname HDF5ColumnSeed
-HDF5ColumnVector <- function(x, ...) {
-    if (!methods::is(x, "HDF5ColumnSeed")) {
-        x <- HDF5ColumnSeed(x, ...)
-    }
-    methods::new("HDF5ColumnVector", seed=x)
-}
-
-#' @export
-#' @rdname HDF5ColumnSeed
-#' @importFrom DelayedArray DelayedArray
-setMethod("DelayedArray", 
-          "HDF5ColumnSeed", 
-          function(seed) HDF5ColumnVector(seed))

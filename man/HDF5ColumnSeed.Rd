@@ -6,6 +6,10 @@
 \alias{HDF5ColumnSeed-method}
 \alias{HDF5ColumnVector}
 \alias{DelayedArray,HDF5ColumnSeed-method}
+\alias{dim,HDF5ColumnSeed-method}
+\alias{type,HDF5ColumnSeed-method}
+\alias{path,HDF5ColumnSeed-method}
+\alias{extract_array,HDF5ColumnSeed-method}
 \title{Column of an HDF5-based data frame}
 \usage{
 HDF5ColumnSeed(path, name, column, type = NULL, length = NULL)
@@ -13,6 +17,14 @@ HDF5ColumnSeed(path, name, column, type = NULL, length = NULL)
 HDF5ColumnVector(x, ...)
 
 \S4method{DelayedArray}{HDF5ColumnSeed}(seed)
+
+\S4method{dim}{HDF5ColumnSeed}(x)
+
+\S4method{type}{HDF5ColumnSeed}(x)
+
+\S4method{path}{HDF5ColumnSeed}(object)
+
+\S4method{extract_array}{HDF5ColumnSeed}(x, index)
 }
 \arguments{
 \item{path}{String containing a path to a HDF5-based data frame.}
@@ -37,7 +49,7 @@ file (to be used as \code{path}), or an existing HDF5ColumnSeed object.}
 \item{...}{Further arguments to be passed to the \code{HDF5ColumnSeed} 
 constructor.}
 
-\item{seed}{A HDF5ColumnSeed object}
+\item{seed, object}{A HDF5ColumnSeed object}
 }
 \value{
 For \code{HDF5ColumnSeed}, a HDF5ColumnSeed is returned, obviously.

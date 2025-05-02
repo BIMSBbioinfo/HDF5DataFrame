@@ -12,12 +12,25 @@
 \alias{names<-,HDF5DataFrame-method}
 \alias{[[,HDF5DataFrame-method}
 \alias{[[<-,HDF5DataFrame-method}
+\alias{nrow,HDF5DataFrame-method}
 \title{HDF5-backed DataFrame}
 \usage{
-HDF5DataFrame(tab, name, columns = NULL, nrows = NULL)
+HDF5DataFrame(x, name, columns = NULL, nrows = NULL)
+
+\S4method{nrow}{HDF5DataFrame}(x)
+
+\S4method{length}{HDF5DataFrame}(x)
+
+\S4method{path}{HDF5DataFrame}(object)
+
+\S4method{rownames}{HDF5DataFrame}(x)
+
+\S4method{names}{HDF5DataFrame}(x)
+
+\S4method{rownames}{HDF5DataFrame}(x) <- value
 }
 \arguments{
-\item{tab}{A set of HDF5Arrays that are the columns of the HDF5DataFrame 
+\item{x, object}{A set of HDF5Arrays that are the columns of the HDF5DataFrame 
 object.}
 
 \item{name}{String containing the HDF5 group of the h5 file.}
@@ -30,7 +43,7 @@ data frame. If \code{NULL}, this is determined from \code{path}.}
 }
 \value{
 A HDF5DataFrame where each column is a 
-\link[HDF5ColumnVector-class]{HDF5ColumnVector}.
+\link[HDF5DatqFrame]{HDF5ColumnVector}.
 }
 \description{
 Create a HDF5-backed \link[S4Vectors]{DataFrame}, where the data are 
@@ -44,8 +57,8 @@ library(HDF5DataFrame)
 
 # h5
 output_h5ad <- tempfile(fileext = ".h5")
-rhdf5::h5createFile(output_h5ad)
-rhdf5::h5createGroup(output_h5ad, group = "assay")
+h5createFile(output_h5ad)
+h5createGroup(output_h5ad, group = "assay")
 
 # data
 data("chickwts")
