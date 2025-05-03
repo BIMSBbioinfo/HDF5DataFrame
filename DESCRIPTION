@@ -24,7 +24,9 @@ Imports:
     h5mread
 Suggests:
     testthat,
-    knitr
+    knitr,
+    HDF5Array,
+    rhdf5
 biocViews: DataRepresentation, Infrastructure, Software
 VignetteBuilder: knitr
 RoxygenNote: 7.3.2

@@ -66,6 +66,16 @@ metadata_large <-
                 columns = names(meta.data_list))
 ```
 
+# Methods
+
+```{r methods}
+# coerce to data.frame
+metadata_large <- as.data.frame(metadata_large)
+
+# cbind
+metadata_large <- cbind(metadata_large, metadata)
+```
+
 # Session info
 
 ```{r sessionInfo, echo=FALSE}

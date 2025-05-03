@@ -2,17 +2,27 @@
 % Please edit documentation in R/HDF5ColumnSeed.R
 \name{HDF5ColumnSeed}
 \alias{HDF5ColumnSeed}
-\alias{DelayedArray,}
-\alias{HDF5ColumnSeed-method}
-\alias{HDF5ColumnVector}
 \alias{DelayedArray,HDF5ColumnSeed-method}
-\title{Column of an HDF5-based data frame}
+\alias{HDF5ColumnVector}
+\alias{dim,HDF5ColumnSeed-method}
+\alias{type,HDF5ColumnSeed-method}
+\alias{path,HDF5ColumnSeed-method}
+\alias{extract_array,HDF5ColumnSeed-method}
+\title{HDF5ColumnSeed}
 \usage{
 HDF5ColumnSeed(path, name, column, type = NULL, length = NULL)
 
 HDF5ColumnVector(x, ...)
 
 \S4method{DelayedArray}{HDF5ColumnSeed}(seed)
+
+\S4method{dim}{HDF5ColumnSeed}(x)
+
+\S4method{type}{HDF5ColumnSeed}(x)
+
+\S4method{path}{HDF5ColumnSeed}(object)
+
+\S4method{extract_array}{HDF5ColumnSeed}(x, index)
 }
 \arguments{
 \item{path}{String containing a path to a HDF5-based data frame.}
@@ -37,7 +47,10 @@ file (to be used as \code{path}), or an existing HDF5ColumnSeed object.}
 \item{...}{Further arguments to be passed to the \code{HDF5ColumnSeed} 
 constructor.}
 
-\item{seed}{A HDF5ColumnSeed object}
+\item{seed, object}{A HDF5ColumnSeed object}
+
+\item{index}{An unnamed list of integer vectors, one per dimension in x. 
+See \link[S4Arrays]{extract_array}}
 }
 \value{
 For \code{HDF5ColumnSeed}, a HDF5ColumnSeed is returned, obviously.
@@ -48,6 +61,49 @@ For \code{HDF5ColumnVector}, a HDF5ColumnVector is returned.
 Represent a column of a HDF5-based data frame as a 1-dimensional 
 \link[DelayedArray]{DelayedArray}. This allows us to use HDF5-backed data 
 inside \link[S4Vectors]{DataFrame} without loading them into memory.
+}
+\examples{
+# libraries
+library(rhdf5)
+library(HDF5Array)
+library(HDF5DataFrame)
+
+# h5
+output_h5ad <- tempfile(fileext = ".h5")
+h5createFile(output_h5ad)
+h5createGroup(output_h5ad, group = "assay")
+
+# data
+data("chickwts")
+metadata <- chickwts
+
+# set metadata
+meta.data_list <- list()
+for(i in 1:ncol(metadata)){
+  cur_column <- as.vector(subset(metadata, 
+                                 select = colnames(metadata)[i]))[[1]]
+  if(is.character(cur_column) || is.factor(cur_column))
+    cur_column <- as.character(cur_column)
+  cur_column <- as.array(cur_column)
+  meta.data_list[[colnames(metadata)[i]]] <- 
+    writeHDF5Array(cur_column, 
+                   output_h5ad, 
+                   name = paste0("assay", "/", 
+                                 colnames(metadata)[i]), 
+                   with.dimnames = FALSE)
+}
+
+# define hd5columnseed
+columnseed <- HDF5ColumnSeed(path = path(meta.data_list[[1]]), 
+                             name = "metadata", 
+                             column = colnames(metadata)[i], 
+                             type = type(meta.data_list[[1]]))
+
+# methods
+dim(columnseed)
+path(columnseed)
+type(columnseed)                              
+                       
 }
 \author{
 Artür Manukyan
