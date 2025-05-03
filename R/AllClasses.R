@@ -7,7 +7,7 @@
 #' (.h5 or .h5ad) where the dataset is located. 
 #' @param name The name of the group in the HDF5 file.
 #' @param columns the names of the columns, 
-#' see \link[HDF5DatqFrame]{HDF5ColumnVector}
+#' see \link[HDF5DataFrame]{HDF5ColumnVector}
 #' @param nrows the number of rows of the DataFrame.
 #'
 #' @exportClass HDF5DataFrame
@@ -20,13 +20,13 @@ setClass("HDF5DataFrame",
 
 #' HDF5ColumnSeed Class
 #' 
-#' The HDF5ColumnSeed class for \link[HDF5DatqFrame]{HDF5ColumnVector}.
+#' The HDF5ColumnSeed class for \link[HDF5DataFrame]{HDF5ColumnVector}.
 #'
 #' @param path The path (as a single string or H5File object) to the HDF5 file 
 #' (.h5 or .h5ad) where the dataset is located. 
 #' @param name The name of the dataset in the HDF5 file.
 #' @param column the names of the columns, 
-#' see \link[HDF5DatqFrame]{HDF5ColumnVector}
+#' see \link[HDF5DataFrame]{HDF5ColumnVector}
 #' @param length the length of the \link[HDF5Array]{HDF5Array}.
 #' 
 #' @exportClass HDF5ColumnSeed
@@ -42,7 +42,7 @@ setClass("HDF5ColumnSeed",
 #' The HDF5ColumnVector class for each column of a 
 #' \link[HDF5DataFrame]{HDF5DataFrame} class
 #'
-#' @param seed An \link[HDF5DatqFrame]{HDF5ColumnSeed} object
+#' @param seed An \link[HDF5DataFrame]{HDF5ColumnSeed} object
 #'
 #' @exportClass HDF5ColumnVector
 setClass("HDF5ColumnVector", 

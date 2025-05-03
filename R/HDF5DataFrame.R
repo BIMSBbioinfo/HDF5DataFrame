@@ -3,17 +3,19 @@
 #' Create a HDF5-backed \link[S4Vectors]{DataFrame}, where the data are 
 #' kept on disk until requested.
 #' 
-#' @param x,object A set of HDF5Arrays that are the columns of the HDF5DataFrame 
-#' object.
+#' @param x,object A set of HDF5Arrays that are the columns of the 
+#' HDF5DataFrame object.
 #' @param name String containing the HDF5 group of the h5 file.
 #' @param columns Character vector containing the names of columns in a  
 #' HDF5-based data frame. If \code{NULL}, this is determined from \code{path}.
 #' @param nrows Integer scalar specifying the number of rows in a  HDF5-based 
 #' data frame. If \code{NULL}, this is determined from \code{path}.
+#' @param value rownames, names or new columns for 
+#' \link[HDF5DataFrame]{HDF5DataFrame} object
 #'
 #' @importFrom methods new as is callNextMethod
 #' @importFrom DelayedArray path
-#' @return A HDF5DataFrame where each column is a 
+#' @return A HDF5DataFrame object where each column is a 
 #' \link[HDF5DataFrame]{HDF5ColumnVector}.
 #'
 #' @author Artür Manukyan
@@ -69,6 +71,12 @@
 #'   HDF5DataFrame(meta.data_list,
 #'                 name = "assay", 
 #'                 columns = names(meta.data_list))
+#' 
+#' # coerce to data.frame
+#' metadata_large <- as.data.frame(metadata_large)
+#' 
+#' # cbind
+#' metadata_large <- cbind(metadata_large, metadata)
 #' 
 #' @export
 HDF5DataFrame <- function(x, name, columns=NULL, nrows=NULL) {

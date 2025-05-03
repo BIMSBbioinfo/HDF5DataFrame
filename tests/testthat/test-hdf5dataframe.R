@@ -19,7 +19,7 @@ test_that("create metadata", {
 
   # set metadata
   meta.data_list <- list()
-  h5createGroup(output_h5ad, group = "assay")
+  h5createGroup(output_h5ad, group = "metadata")
   for(i in 1:ncol(metadata)){
     cur_column <- as.vector(subset(metadata, 
                                    select = colnames(metadata)[i]))[[1]]
@@ -29,13 +29,13 @@ test_that("create metadata", {
     meta.data_list[[colnames(metadata)[i]]] <- 
       writeHDF5Array(cur_column, 
                      output_h5ad, 
-                     name = paste0("assay", "/", 
+                     name = paste0("metadata", "/", 
                                    colnames(metadata)[i]), 
                      with.dimnames = FALSE)
   }
   metadata_large <- 
     HDF5DataFrame(meta.data_list, 
-                  name = "assay", 
+                  name = "metadata", 
                   columns = names(meta.data_list))
   
   # check functions
@@ -59,6 +59,10 @@ test_that("create metadata", {
   expect_equal(nrow(metadata_large_local), nrow(metadata))
   expect_equal(names(metadata_large_local), names(metadata))
   
+  # rownames
+  rownames(metadata_large) <- paste0("row", 1:nrow(metadata_large))
+  expect_equal(rownames(metadata_large), paste0("row", 1:nrow(metadata_large)))
+  
   # merge with in memory metadata
   metadata3 <- cbind(metadata_large, metadata2)
   
@@ -68,7 +72,7 @@ test_that("create metadata", {
   
   # set new metadata
   meta.data_list <- list()
-  h5createGroup(output_h5ad, group = "assay2")
+  h5createGroup(output_h5ad, group = "metadata2")
   for(i in 1:ncol(metadata2)){
     cur_column <- as.vector(subset(metadata2, 
                                    select = colnames(metadata2)[i]))[[1]]
@@ -78,13 +82,13 @@ test_that("create metadata", {
     meta.data_list[[colnames(metadata)[i]]] <- 
       writeHDF5Array(cur_column, 
                      output_h5ad, 
-                     name = paste0("assay2", "/", 
+                     name = paste0("metadata2", "/", 
                                    colnames(metadata)[i]), 
                      with.dimnames = FALSE) 
   }
   metadata2_large <- 
     HDF5DataFrame(meta.data_list, 
-                  name = "assay2", 
+                  name = "metadata2", 
                   columns = names(meta.data_list))
 
   # merge with in memory metadata

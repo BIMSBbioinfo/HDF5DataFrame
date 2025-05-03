@@ -11,7 +11,7 @@
 \item{name}{The name of the group in the HDF5 file.}
 
 \item{columns}{the names of the columns, 
-see \link[HDF5DatqFrame]{HDF5ColumnVector}}
+see \link[HDF5DataFrame]{HDF5ColumnVector}}
 
 \item{nrows}{the number of rows of the DataFrame.}
 }

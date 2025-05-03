@@ -1,4 +1,4 @@
-#' Column of an HDF5-based data frame
+#' HDF5ColumnSeed
 #'
 #' Represent a column of a HDF5-based data frame as a 1-dimensional 
 #' \link[DelayedArray]{DelayedArray}. This allows us to use HDF5-backed data 
@@ -18,6 +18,8 @@
 #' @param x Either a string containing the path to an HDF5-based data frame 
 #' file (to be used as \code{path}), or an existing HDF5ColumnSeed object.
 #' @param seed,object  A HDF5ColumnSeed object
+#' @param index An unnamed list of integer vectors, one per dimension in x. 
+#' See \link[S4Arrays]{extract_array}
 #' @param ... Further arguments to be passed to the \code{HDF5ColumnSeed} 
 #' constructor.
 #'
@@ -29,9 +31,52 @@
 #' @author Artür Manukyan
 #'
 #' @aliases 
-#' DelayedArray, HDF5ColumnSeed-method
+#' DelayedArray,HDF5ColumnSeed-method
 #' 
 #' @name HDF5ColumnSeed
+#' 
+#' @examples
+#' # libraries
+#' library(rhdf5)
+#' library(HDF5Array)
+#' library(HDF5DataFrame)
+#' 
+#' # h5
+#' output_h5ad <- tempfile(fileext = ".h5")
+#' h5createFile(output_h5ad)
+#' h5createGroup(output_h5ad, group = "assay")
+#' 
+#' # data
+#' data("chickwts")
+#' metadata <- chickwts
+#' 
+#' # set metadata
+#' meta.data_list <- list()
+#' for(i in 1:ncol(metadata)){
+#'   cur_column <- as.vector(subset(metadata, 
+#'                                  select = colnames(metadata)[i]))[[1]]
+#'   if(is.character(cur_column) || is.factor(cur_column))
+#'     cur_column <- as.character(cur_column)
+#'   cur_column <- as.array(cur_column)
+#'   meta.data_list[[colnames(metadata)[i]]] <- 
+#'     writeHDF5Array(cur_column, 
+#'                    output_h5ad, 
+#'                    name = paste0("assay", "/", 
+#'                                  colnames(metadata)[i]), 
+#'                    with.dimnames = FALSE)
+#' }
+#' 
+#' # define hd5columnseed
+#' columnseed <- HDF5ColumnSeed(path = path(meta.data_list[[1]]), 
+#'                              name = "metadata", 
+#'                              column = colnames(metadata)[i], 
+#'                              type = type(meta.data_list[[1]]))
+#' 
+#' # methods
+#' dim(columnseed)
+#' path(columnseed)
+#' type(columnseed)                              
+#'                        
 NULL
 
 #' @export
