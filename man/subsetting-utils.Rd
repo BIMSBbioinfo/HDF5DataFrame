@@ -26,6 +26,11 @@
 
 \item{value}{vector to be replaced}
 }
+\value{
+HDF5DataFrame object
+
+HDF5DataFrame object
+}
 \description{
 Low-level utility functions and classes to support subsetting of 
 vector-like objects. They are not intended to be used directly. 

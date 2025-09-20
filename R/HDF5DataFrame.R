@@ -5,11 +5,18 @@
 #' 
 #' @param x,object A set of HDF5Arrays that are the columns of the 
 #' HDF5DataFrame object.
+#' @param i Depends on the usage
+#' @param j Depends on the usage
+#' @param ... arguments passed to other methods
 #' @param name String containing the HDF5 group of the h5 file.
 #' @param columns Character vector containing the names of columns in a  
 #' HDF5-based data frame. If \code{NULL}, this is determined from \code{path}.
 #' @param nrows Integer scalar specifying the number of rows in a  HDF5-based 
 #' data frame. If \code{NULL}, this is determined from \code{path}.
+#' @param row.names,optional See ?base::\link[base]{as.data.frame} for a 
+#' description of these arguments.
+#' @param deparse.level See ?base::\link[base]{cbind} for a description of
+#' description of these arguments.
 #' @param value rownames, names or new columns for 
 #' \link[HDF5DataFrame]{HDF5DataFrame} object
 #'
@@ -79,6 +86,7 @@
 #' metadata_large <- cbind(metadata_large, metadata)
 #' 
 #' @export
+#' @return HDF5DataFrame object
 HDF5DataFrame <- function(x, name, columns=NULL, nrows=NULL) {
     if (is.null(columns) || is.null(nrows)) {
         if (is.null(columns)) {
@@ -102,22 +110,27 @@ HDF5DataFrame <- function(x, name, columns=NULL, nrows=NULL) {
 
 #' @rdname HDF5DataFrame
 #' @export
+#' @return number of rows of HDF5DataFrame object
 setMethod("nrow", "HDF5DataFrame", function(x) x@nrows)
 
 #' @rdname HDF5DataFrame
 #' @export
+#' @return length of HDF5DataFrame object
 setMethod("length", "HDF5DataFrame", function(x) length(x@columns))
 
 #' @rdname HDF5DataFrame
 #' @export
+#' @return path to hdf5 file of HDF5DataFrame object
 setMethod("path", "HDF5DataFrame", function(object) object@path)
 
 #' @rdname HDF5DataFrame
 #' @export
+#' @return rownames of HDF5DataFrame object
 setMethod("rownames", "HDF5DataFrame", function(x) NULL)
 
 #' @rdname HDF5DataFrame
 #' @export
+#' @return names of columns of HDF5DataFrame object
 setMethod("names", "HDF5DataFrame", function(x) x@columns)
 
 #' @rdname HDF5DataFrame
@@ -130,6 +143,7 @@ setReplaceMethod("rownames", "HDF5DataFrame", function(x, value) {
     x
 })
 
+#' @rdname HDF5DataFrame
 #' @export
 setReplaceMethod("names", "HDF5DataFrame", function(x, value) {
     if (!identical(value, names(x))) {
@@ -159,6 +173,7 @@ setReplaceMethod("names", "HDF5DataFrame", function(x, value) {
 #' @rdname subsetting-utils
 #' @export
 #' @importFrom S4Vectors extractROWS
+#' @return HDF5DataFrame object
 setMethod("extractROWS", "HDF5DataFrame", function(x, i) {
     if (!missing(i)) {
         collapsed <- .collapse_to_df(x)
@@ -172,6 +187,7 @@ setMethod("extractROWS", "HDF5DataFrame", function(x, i) {
 #' @export
 #' @importFrom stats setNames
 #' @importFrom S4Vectors extractCOLS normalizeSingleBracketSubscript
+#' @return HDF5DataFrame object
 setMethod("extractCOLS", "HDF5DataFrame", function(x, i) {
     if (!missing(i)) {
         xstub <- setNames(seq_along(x), names(x))
@@ -182,6 +198,7 @@ setMethod("extractCOLS", "HDF5DataFrame", function(x, i) {
     x
 })
 
+#' @rdname HDF5DataFrame
 #' @export
 #' @importFrom S4Vectors normalizeDoubleBracketSubscript
 setMethod("[[", "HDF5DataFrame", function(x, i, j, ...) {
@@ -207,19 +224,6 @@ setMethod("replaceROWS", "HDF5DataFrame", function(x, i, value) {
     replaceROWS(x, i, value)
 })
 
-#' @importFrom S4Vectors normalizeSingleBracketReplacementValue
-setMethod("normalizeSingleBracketReplacementValue",
-          "HDF5DataFrame", 
-          function(value, x) {
-    if (methods::is(value, "HDF5ColumnVector")) {
-        return(methods::new("HDF5DataFrame", 
-                   path=value@seed@path, 
-                   columns=value@seed@column, 
-                   nrows=length(value)))
-    }
-    methods::callNextMethod()
-})
-
 #' @rdname subsetting-utils
 #' @export
 #' @importFrom stats setNames
@@ -243,6 +247,7 @@ setMethod("replaceCOLS", "HDF5DataFrame", function(x, i, value) {
     replaceCOLS(x, i, value)
 })
 
+#' @rdname HDF5DataFrame
 #' @importFrom S4Vectors normalizeDoubleBracketSubscript
 setMethod("[[<-", "HDF5DataFrame", function(x, i, j, ..., value) {
     i2 <- normalizeDoubleBracketSubscript(i, x, allow.nomatch=TRUE)
@@ -349,8 +354,10 @@ cbind.HDF5DataFrame <- function(..., deparse.level=1) {
     }
 }
 
+#' @rdname HDF5DataFrame
 #' @export
 #' @importFrom S4Vectors bindCOLS
+#' @return HDF5DataFrame object
 setMethod("cbind", "HDF5DataFrame", cbind.HDF5DataFrame)
 
 #' @importFrom S4Vectors make_zero_col_DFrame 
@@ -370,8 +377,10 @@ setMethod("cbind", "HDF5DataFrame", cbind.HDF5DataFrame)
     df
 }
 
+#' @rdname HDF5DataFrame
 #' @importFrom h5mread h5mread
 #' @export
+#' @return data.frame object
 setMethod("as.data.frame", 
           "HDF5DataFrame", 
           function(x, row.names = NULL, optional = FALSE, ...) {

@@ -13,6 +13,9 @@
 \alias{[[,HDF5DataFrame-method}
 \alias{[[<-,HDF5DataFrame-method}
 \alias{nrow,HDF5DataFrame-method}
+\alias{names<-,HDF5DataFrame,ANY-method}
+\alias{[[,HDF5DataFrame,ANY,ANY-method}
+\alias{[[<-,HDF5DataFrame,ANY,ANY,ANY-method}
 \title{HDF5-backed DataFrame}
 \usage{
 HDF5DataFrame(x, name, columns = NULL, nrows = NULL)
@@ -28,6 +31,16 @@ HDF5DataFrame(x, name, columns = NULL, nrows = NULL)
 \S4method{names}{HDF5DataFrame}(x)
 
 \S4method{rownames}{HDF5DataFrame}(x) <- value
+
+\S4method{names}{HDF5DataFrame,ANY}(x) <- value
+
+\S4method{[[}{HDF5DataFrame,ANY,ANY}(x, i, j, ...)
+
+\S4method{[[}{HDF5DataFrame,ANY,ANY,ANY}(x, i, j, ...) <- value
+
+\S4method{cbind}{HDF5DataFrame}(..., deparse.level = 1)
+
+\S4method{as.data.frame}{HDF5DataFrame}(x, row.names = NULL, optional = FALSE, ...)
 }
 \arguments{
 \item{x, object}{A set of HDF5Arrays that are the columns of the 
@@ -43,10 +56,38 @@ data frame. If \code{NULL}, this is determined from \code{path}.}
 
 \item{value}{rownames, names or new columns for 
 \link[HDF5DataFrame]{HDF5DataFrame} object}
+
+\item{i}{Depends on the usage}
+
+\item{j}{Depends on the usage}
+
+\item{...}{arguments passed to other methods}
+
+\item{deparse.level}{See ?base::\link[base]{cbind} for a description of
+description of these arguments.}
+
+\item{row.names, optional}{See ?base::\link[base]{as.data.frame} for a 
+description of these arguments.}
 }
 \value{
 A HDF5DataFrame object where each column is a 
 \link[HDF5DataFrame]{HDF5ColumnVector}.
+
+HDF5DataFrame object
+
+number of rows of HDF5DataFrame object
+
+length of HDF5DataFrame object
+
+path to hdf5 file of HDF5DataFrame object
+
+rownames of HDF5DataFrame object
+
+names of columns of HDF5DataFrame object
+
+HDF5DataFrame object
+
+data.frame object
 }
 \description{
 Create a HDF5-backed \link[S4Vectors]{DataFrame}, where the data are 
