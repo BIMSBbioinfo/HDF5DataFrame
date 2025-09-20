@@ -1,22 +1,22 @@
 # HDF5DataFrame
 
-
+HDF5-backed DataFrame objects and methods.
 
 ## Installation
 
-You can install **{ImageArray}** from Bioconductor using **BiocManager**:
+You can install **{HDF5DataFrame}** from Bioconductor using **BiocManager**:
 
 ```r
 if (!requireNamespace("BiocManager", quietly = TRUE)) {
     install.packages("BiocManager")
 }
-BiocManager::install("ImageArray")
+BiocManager::install("HDF5DataFrame")
 ```
 
-Or you can install the development version of **{ImageArray}** from GitHub like so:
+Or you can install the development version of **{HDF5DataFrame}** from GitHub like so:
 
 ``` r
 if (!require("devtools", quietly = TRUE))
     install.packages("devtools")
-devtools::install_github("BIMSBbioinfo/ImageArray")
+devtools::install_github("BIMSBbioinfo/HDF5DataFrame")
 ```
