@@ -27,6 +27,25 @@ library(HDF5Array)
 library(HDF5DataFrame)
 ```
 
+# Installation
+
+You can install **{HDF5DataFrame}** from Bioconductor using **BiocManager**:
+
+```{r bioc, eval=FALSE}
+if (!requireNamespace("BiocManager", quietly = TRUE)) {
+    install.packages("BiocManager")
+}
+BiocManager::install("HDF5DataFrame")
+```
+
+Or you can install the development version of **{HDF5DataFrame}** from GitHub like so:
+
+```{r devtools, eval=FALSE}
+if (!require("devtools", quietly = TRUE))
+    install.packages("devtools")
+devtools::install_github("BIMSBbioinfo/HDF5DataFrame")
+```
+
 # Usage
 
 The main usage of the HDF5DataFrame is to deliver DelayedArray 
