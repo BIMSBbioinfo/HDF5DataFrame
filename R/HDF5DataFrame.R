@@ -46,7 +46,7 @@
 #' # h5
 #' output_h5ad <- tempfile(fileext = ".h5")
 #' h5createFile(output_h5ad)
-#' h5createGroup(output_h5ad, group = "assay")
+#' h5createGroup(output_h5ad, group = "metadata")
 #' 
 #' # data
 #' data("chickwts")
@@ -63,13 +63,13 @@
 #'   meta.data_list[[colnames(metadata)[i]]] <- 
 #'     writeHDF5Array(cur_column, 
 #'                    output_h5ad, 
-#'                    name = paste0("assay", "/", 
+#'                    name = paste0("metadata", "/", 
 #'                                  colnames(metadata)[i]), 
 #'                    with.dimnames = FALSE)
 #' }
 #' metadata_large <- 
 #'   HDF5DataFrame(meta.data_list,
-#'                 name = "assay", 
+#'                 name = "metadata", 
 #'                 columns = names(meta.data_list))
 #' 
 #' # coerce to data.frame
@@ -139,6 +139,24 @@ setReplaceMethod("names", "HDF5DataFrame", function(x, value) {
     x
 })
 
+#' subsetting-utils 
+#' 
+#' Low-level utility functions and classes to support subsetting of 
+#' vector-like objects. They are not intended to be used directly. 
+#' See \link[S4Vectors]{extractROWS}.
+#' 
+#' @name subsetting-utils
+#'
+#' @param x HDF5DataFrame object
+#' @param i row/column index or name
+#' @param value vector to be replaced
+#' @aliases 
+#' extractROWS,HDF5DataFrame,ANY-method
+#' extractCOLS,HDF5DataFrame,ANY-method
+#' replaceROWS,HDF5DataFrame,ANY-method
+#' replaceCOLS,HDF5DataFrame,ANY-method
+
+#' @rdname subsetting-utils
 #' @export
 #' @importFrom S4Vectors extractROWS
 setMethod("extractROWS", "HDF5DataFrame", function(x, i) {
@@ -150,6 +168,7 @@ setMethod("extractROWS", "HDF5DataFrame", function(x, i) {
     }
 })
 
+#' @rdname subsetting-utils
 #' @export
 #' @importFrom stats setNames
 #' @importFrom S4Vectors extractCOLS normalizeSingleBracketSubscript
@@ -180,6 +199,7 @@ setMethod("[[", "HDF5DataFrame", function(x, i, j, ...) {
     HDF5ColumnVector(x@path, column=x@columns[i], name = x@name)
 })
 
+#' @rdname subsetting-utils
 #' @export
 #' @importFrom S4Vectors replaceROWS
 setMethod("replaceROWS", "HDF5DataFrame", function(x, i, value) {
@@ -200,6 +220,7 @@ setMethod("normalizeSingleBracketReplacementValue",
     methods::callNextMethod()
 })
 
+#' @rdname subsetting-utils
 #' @export
 #' @importFrom stats setNames
 #' @importFrom S4Vectors replaceCOLS normalizeSingleBracketSubscript
@@ -278,6 +299,7 @@ cbind.HDF5DataFrame <- function(..., deparse.level=1) {
     if (!preserved) {
         for (i in seq_along(objects)) {
             obj <- objects[[i]]
+            print(obj)
             if (methods::is(obj, "HDF5DataFrame")) {
                 objects[[i]] <- .collapse_to_df(obj)
             }
@@ -316,6 +338,7 @@ cbind.HDF5DataFrame <- function(..., deparse.level=1) {
             all_mcols <- NULL
         }
 
+        # make column un
         methods::new("HDF5DataFrame", 
             path=xpath,
             columns=all_columns,
