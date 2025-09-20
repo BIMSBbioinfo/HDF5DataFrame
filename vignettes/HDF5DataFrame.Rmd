@@ -37,7 +37,7 @@ operations for DataFrames
 # create h5 and a group for the hdf5 backed data frames
 output_h5ad <- tempfile(fileext = ".h5")
 h5createFile(output_h5ad)
-h5createGroup(output_h5ad, group = "assay")
+h5createGroup(output_h5ad, group = "metadata")
 
 # data
 data("chickwts")
@@ -54,26 +54,33 @@ for(i in 1:ncol(metadata)){
   meta.data_list[[colnames(metadata)[i]]] <- 
     writeHDF5Array(cur_column,
                    output_h5ad, 
-                   name = paste0("assay", "/", 
+                   name = paste0("metadata", "/", 
                                  colnames(metadata)[i]), 
                    with.dimnames = FALSE) 
 }
 
 # create HDF5DataFrame
-metadata_large <- 
+metadata_hdf5 <- 
   HDF5DataFrame(meta.data_list, 
-                name = "assay",
+                name = "metadata",
                 columns = names(meta.data_list))
+
+# view HDF5DataFrame
+metadata_hdf5
 ```
 
 # Methods
 
 ```{r methods}
-# coerce to data.frame
-metadata_large <- as.data.frame(metadata_large)
+# cbind with in memory data
+metadata_hdf5 <- cbind(metadata_hdf5, metadata)
+metadata_hdf5
+```
 
-# cbind
-metadata_large <- cbind(metadata_large, metadata)
+```{r methods2}
+# coerce to data.frame
+metadata_hdf5 <- as.data.frame(metadata_hdf5)
+head(metadata_hdf5)
 ```
 
 # Session info

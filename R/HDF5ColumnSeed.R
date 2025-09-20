@@ -44,7 +44,7 @@
 #' # h5
 #' output_h5ad <- tempfile(fileext = ".h5")
 #' h5createFile(output_h5ad)
-#' h5createGroup(output_h5ad, group = "assay")
+#' h5createGroup(output_h5ad, group = "metadata")
 #' 
 #' # data
 #' data("chickwts")
@@ -61,7 +61,7 @@
 #'   meta.data_list[[colnames(metadata)[i]]] <- 
 #'     writeHDF5Array(cur_column, 
 #'                    output_h5ad, 
-#'                    name = paste0("assay", "/", 
+#'                    name = paste0("metadata", "/", 
 #'                                  colnames(metadata)[i]), 
 #'                    with.dimnames = FALSE)
 #' }
