@@ -13,10 +13,6 @@ vignette: |
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(cache=FALSE, message=FALSE, warning=FALSE)
-```
-
 # Introduction
 
 HDF5-backed DataFrame objects and methods. 
@@ -29,7 +25,7 @@ library(HDF5DataFrame)
 
 # Installation
 
-You can install **{HDF5DataFrame}** from Bioconductor using **BiocManager**:
+You can install `r Biocpkg("HDF5DataFrame")` from Bioconductor using **BiocManager**:
 
 ```{r bioc, eval=FALSE}
 if (!requireNamespace("BiocManager", quietly = TRUE)) {
@@ -38,7 +34,7 @@ if (!requireNamespace("BiocManager", quietly = TRUE)) {
 BiocManager::install("HDF5DataFrame")
 ```
 
-Or you can install the development version of **{HDF5DataFrame}** from GitHub like so:
+Or you can install the development version of `r Biocpkg("HDF5DataFrame")` from GitHub like so:
 
 ```{r devtools, eval=FALSE}
 if (!require("devtools", quietly = TRUE))

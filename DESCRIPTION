@@ -23,6 +23,7 @@ Imports:
     BiocGenerics,
     h5mread
 Suggests:
+    BiocStyle
     testthat,
     knitr,
     HDF5Array,
