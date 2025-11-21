@@ -18,6 +18,29 @@ dataset.}
 
 \item{replace}{replace}
 }
+\value{
+HDF5DataFrame object
+}
 \description{
 A function for writing an data frames to an HDF5 file.
+}
+\examples{
+# libraries
+library(rhdf5)
+library(HDF5Array)
+library(HDF5DataFrame)
+
+# h5
+output_h5ad <- tempfile(fileext = ".h5")
+
+# data
+data("chickwts")
+metadata <- chickwts
+
+# write data frame to HDF5  
+metadata_large <- writeHDF5DataFrame(metadata, 
+                                     filepath = output_h5ad, 
+                                     name = "metadata", 
+                                     replace = TRUE)
+                                     
 }

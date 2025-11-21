@@ -20,12 +20,13 @@ HDF5-backed DataFrame objects and methods.
 ```{r load-libs}
 library(rhdf5)
 library(HDF5Array)
-library(HDF5DataFrame)
+# library(HDF5DataFrame)
 ```
 
 # Installation
 
-You can install `r Biocpkg("HDF5DataFrame")` from Bioconductor using **BiocManager**:
+You can install `r Biocpkg("HDF5DataFrame")` from Bioconductor using 
+**BiocManager**:
 
 ```{r bioc, eval=FALSE}
 if (!requireNamespace("BiocManager", quietly = TRUE)) {
@@ -34,7 +35,8 @@ if (!requireNamespace("BiocManager", quietly = TRUE)) {
 BiocManager::install("HDF5DataFrame")
 ```
 
-Or you can install the development version of `r Biocpkg("HDF5DataFrame")` from GitHub like so:
+Or you can install the development version of `r Biocpkg("HDF5DataFrame")` 
+from GitHub like so:
 
 ```{r devtools, eval=FALSE}
 if (!require("devtools", quietly = TRUE))
@@ -51,34 +53,16 @@ operations for DataFrames
 
 # create h5 and a group for the hdf5 backed data frames
 output_h5ad <- tempfile(fileext = ".h5")
-h5createFile(output_h5ad)
-h5createGroup(output_h5ad, group = "metadata")
 
 # data
 data("chickwts")
 metadata <- chickwts
 
-# create metadata
-meta.data_list <- list()
-for(i in 1:ncol(metadata)){
-  cur_column <- as.vector(subset(metadata, 
-                                 select = colnames(metadata)[i]))[[1]]
-  if(is.character(cur_column) || is.factor(cur_column))
-    cur_column <- as.character(cur_column)
-  cur_column <- as.array(cur_column)
-  meta.data_list[[colnames(metadata)[i]]] <- 
-    writeHDF5Array(cur_column,
-                   output_h5ad, 
-                   name = paste0("metadata", "/", 
-                                 colnames(metadata)[i]), 
-                   with.dimnames = FALSE) 
-}
-
-# create HDF5DataFrame
-metadata_hdf5 <- 
-  HDF5DataFrame(meta.data_list, 
-                name = "metadata",
-                columns = names(meta.data_list))
+# create HDF5DataFrame and write to hdf5
+metadata_hdf5 <- writeHDF5DataFrame(metadata,
+                                    filepath = output_h5ad, 
+                                    name = "metadata",
+                                    replace = TRUE)
 
 # view HDF5DataFrame
 metadata_hdf5

@@ -52,32 +52,19 @@
 #' 
 #' # h5
 #' output_h5ad <- tempfile(fileext = ".h5")
-#' h5createFile(output_h5ad)
-#' h5createGroup(output_h5ad, group = "metadata")
 #' 
 #' # data
 #' data("chickwts")
 #' metadata <- chickwts
 #' 
-#' # set metadata
-#' meta.data_list <- list()
-#' for(i in 1:ncol(metadata)){
-#'   cur_column <- as.vector(subset(metadata, 
-#'                                  select = colnames(metadata)[i]))[[1]]
-#'   if(is.character(cur_column) || is.factor(cur_column))
-#'     cur_column <- as.character(cur_column)
-#'   cur_column <- as.array(cur_column)
-#'   meta.data_list[[colnames(metadata)[i]]] <- 
-#'     writeHDF5Array(cur_column, 
-#'                    output_h5ad, 
-#'                    name = paste0("metadata", "/", 
-#'                                  colnames(metadata)[i]), 
-#'                    with.dimnames = FALSE)
-#' }
-#' metadata_large <- 
-#'   HDF5DataFrame(meta.data_list,
-#'                 name = "metadata", 
-#'                 columns = names(meta.data_list))
+#' # write data frame to HDF5  
+#' metadata_large <- writeHDF5DataFrame(metadata, 
+#'                                      filepath = output_h5ad, 
+#'                                      name = "metadata",
+#'                                      replace = TRUE)
+#'                                      
+#' metadata_large <- HDF5DataFrame(filepath = output_h5ad, 
+#'                                 name = "metadata")                              
 #' 
 #' # coerce to data.frame
 #' metadata_large <- as.data.frame(metadata_large)

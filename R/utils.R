@@ -27,7 +27,7 @@ h5lsgroup <- function(filepath, name) {
 
 .check_dataframe_dim <- function(filepath, name){
   group_metadata <- h5lsgroup(filepath, name)
-  dim_ds <- lapply(1:nrow(group_metadata), function(i){
+  dim_ds <- lapply(seq_len(nrow(group_metadata)), function(i){
     dim(HDF5Array(filepath = filepath, 
                   name = file.path(name, group_metadata$name[i])))
   })

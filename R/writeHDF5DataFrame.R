@@ -11,10 +11,28 @@
 #' @param replace replace
 #'
 #' @importFrom rhdf5 h5createFile h5createGroup
-#' 
-#' @export
 #'
 #' @examples
+#' # libraries
+#' library(rhdf5)
+#' library(HDF5Array)
+#' library(HDF5DataFrame)
+#' 
+#' # h5
+#' output_h5ad <- tempfile(fileext = ".h5")
+#' 
+#' # data
+#' data("chickwts")
+#' metadata <- chickwts
+#' 
+#' # write data frame to HDF5  
+#' metadata_large <- writeHDF5DataFrame(metadata, 
+#'                                      filepath = output_h5ad, 
+#'                                      name = "metadata", 
+#'                                      replace = TRUE)
+#'                                      
+#' @export
+#' @return HDF5DataFrame object                                    
 writeHDF5DataFrame <- function(x, 
                                filepath, 
                                name, 
@@ -42,7 +60,7 @@ writeHDF5DataFrame <- function(x,
   # write data frame
   meta.data_list <- list()
   columns <- colnames(x)
-  for(i in 1:ncol(x)){
+  for(i in seq_len(ncol(x))){
     cur_column <- as.vector(subset(x, select = colnames(x)[i]))[[1]]
     if(is.character(cur_column) || is.factor(cur_column))
       cur_column <- as.character(cur_column)
@@ -55,8 +73,5 @@ writeHDF5DataFrame <- function(x,
   }
   
   # return data frame
-  # HDF5DataFrame(meta.data_list, 
-  #               name = name, 
-  #               columns = names(meta.data_list))
-  HDF5DataFrame2(filepath, name, columns = columns)
+  HDF5DataFrame(filepath, name, columns = columns)
 }
