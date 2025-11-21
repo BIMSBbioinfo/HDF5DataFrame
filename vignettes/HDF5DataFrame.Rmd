@@ -20,7 +20,7 @@ HDF5-backed DataFrame objects and methods.
 ```{r load-libs}
 library(rhdf5)
 library(HDF5Array)
-# library(HDF5DataFrame)
+library(HDF5DataFrame)
 ```
 
 # Installation

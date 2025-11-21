@@ -21,13 +21,13 @@ Imports:
     stats,
     methods,
     BiocGenerics,
-    h5mread
+    h5mread,
+    rhdf5,
+    HDF5Array
 Suggests:
     BiocStyle,
     testthat,
-    knitr,
-    HDF5Array,
-    rhdf5
+    knitr
 biocViews: DataRepresentation, Infrastructure, Software
 VignetteBuilder: knitr
 RoxygenNote: 7.3.3

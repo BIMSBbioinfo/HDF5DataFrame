@@ -40,7 +40,10 @@ HDF5DataFrame(filepath, name, columns = NULL)
 \S4method{as.data.frame}{HDF5DataFrame}(x, row.names = NULL, optional = FALSE, ...)
 }
 \arguments{
-\item{name}{String containing the HDF5 group of the h5 file.}
+\item{filepath}{NULL or the path (as a single string) to the 
+(new or existing) HDF5 file where to write the dataset.}
+
+\item{name}{Name of the HDF5 group of the h5 file.}
 
 \item{columns}{Character vector containing the names of columns in a
 HDF5-based data frame. If \code{NULL}, this is determined from \code{path}.}
@@ -62,9 +65,6 @@ description of these arguments.}
 
 \item{row.names, optional}{See ?base::\link[base]{as.data.frame} for a 
 description of these arguments.}
-
-\item{nrows}{Integer scalar specifying the number of rows in a  HDF5-based 
-data frame. If \code{NULL}, this is determined from \code{path}.}
 }
 \value{
 A HDF5DataFrame object where each column is a 

@@ -8,11 +8,11 @@
 #' @param i Depends on the usage
 #' @param j Depends on the usage
 #' @param ... arguments passed to other methods
-#' @param name String containing the HDF5 group of the h5 file.
+#' @param filepath NULL or the path (as a single string) to the 
+#' (new or existing) HDF5 file where to write the dataset. 
+#' @param name Name of the HDF5 group of the h5 file.
 #' @param columns Character vector containing the names of columns in a  
 #' HDF5-based data frame. If \code{NULL}, this is determined from \code{path}.
-#' @param nrows Integer scalar specifying the number of rows in a  HDF5-based 
-#' data frame. If \code{NULL}, this is determined from \code{path}.
 #' @param row.names,optional See ?base::\link[base]{as.data.frame} for a 
 #' description of these arguments.
 #' @param deparse.level See ?base::\link[base]{cbind} for a description of
