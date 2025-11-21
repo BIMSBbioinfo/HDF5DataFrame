@@ -42,9 +42,9 @@
 #' library(HDF5DataFrame)
 #' 
 #' # h5
-#' output_h5ad <- tempfile(fileext = ".h5")
-#' h5createFile(output_h5ad)
-#' h5createGroup(output_h5ad, group = "metadata")
+#' output_hdf5 <- tempfile(fileext = ".h5")
+#' h5createFile(output_hdf5)
+#' h5createGroup(output_hdf5, group = "metadata")
 #' 
 #' # data
 #' data("chickwts")
@@ -60,7 +60,7 @@
 #'   cur_column <- as.array(cur_column)
 #'   meta.data_list[[colnames(metadata)[i]]] <- 
 #'     writeHDF5Array(cur_column, 
-#'                    output_h5ad, 
+#'                    output_hdf5, 
 #'                    name = paste0("metadata", "/", 
 #'                                  colnames(metadata)[i]), 
 #'                    with.dimnames = FALSE)

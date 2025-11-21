@@ -51,14 +51,35 @@ data("chickwts")
 metadata <- chickwts
 
 # create HDF5DataFrame and write to hdf5
-output_h5ad <- tempfile(fileext = ".h5")
+output_hdf5 <- tempfile(fileext = ".h5")
 metadata_hdf5 <- writeHDF5DataFrame(metadata,
-                                    filepath = output_h5ad, 
+                                    filepath = output_hdf5, 
                                     name = "metadata",
                                     replace = TRUE)
 
 # view HDF5DataFrame
 metadata_hdf5
+```
+
+The `path` method points to the HDF5 file where the data frame is stored. 
+
+```{r path}
+path(metadata_hdf5)
+```
+
+Each column is stored as a separate one dimensional dataset in the HDF5 file.
+Here `metadata` is the group that contains each array with the same length. 
+
+```{r h5ls}
+h5ls(output_hdf5)
+```
+
+If the HDF5 file already contains a data frame at the specified group with
+known name, you can construct an `HDF5DataFrame` object directly
+
+```{r HDF5DataFrame}
+metadata_hdf5 <- HDF5DataFrame(filepath = output_hdf5,
+                               name = "metadata")
 ```
 
 # Methods

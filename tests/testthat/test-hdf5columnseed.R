@@ -16,36 +16,31 @@ test_that("hdf5columnseed", {
   h5createFile(output_h5ad)
   
   # set metadata
-  meta.data_list <- list()
   h5createGroup(output_h5ad, group = "metadata")
-  for(i in 1:ncol(metadata)){
-    cur_column <- as.vector(subset(metadata, 
-                                   select = colnames(metadata)[i]))[[1]]
-    if(is.character(cur_column) || is.factor(cur_column))
-      cur_column <- as.character(cur_column)
-    cur_column <- as.array(cur_column)
-    meta.data_list[[colnames(metadata)[i]]] <- 
-      writeHDF5Array(cur_column, 
-                     output_h5ad, 
-                     name = paste0("metadata", "/", 
-                                   colnames(metadata)[i]), 
-                     with.dimnames = FALSE)
-  }
+  cur_column <- as.vector(subset(metadata, 
+                                 select = colnames(metadata)[1]))[[1]]
+  cur_column <- as.character(cur_column)
+  cur_column <- as.array(cur_column)
+  hdf5_column <-  writeHDF5Array(cur_column, 
+                                 output_h5ad, 
+                                 name = paste0("metadata", "/", 
+                                               colnames(metadata)[1]), 
+                                 with.dimnames = FALSE)
   
   # define hd5columnseed
-  columnseed <- HDF5ColumnSeed(path = path(meta.data_list[[1]]), 
+  columnseed <- HDF5ColumnSeed(path = path(hdf5_column), 
                                name = "metadata", 
-                               column = colnames(metadata)[i], 
-                               type = type(meta.data_list[[1]]))
+                               column = colnames(metadata)[1], 
+                               type = type(hdf5_column))
   
   # dim
   expect_equal(dim(columnseed), nrow(metadata))
   
   # path
-  expect_equal(path(columnseed), path(meta.data_list[[1]]))
+  expect_equal(path(columnseed), path(hdf5_column))
   
   # type
-  expect_equal(type(columnseed), type(meta.data_list[[1]]))
+  expect_equal(type(columnseed), type(hdf5_column))
   
   # refresh
   file.remove(output_h5ad)

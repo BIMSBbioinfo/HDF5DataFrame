@@ -4,7 +4,7 @@
 #' with arbitrary collections of columns stored in HDF5.
 #'
 #' @param path The path (as a single string or H5File object) to the HDF5 file 
-#' (.h5 or .h5ad) where the dataset is located. 
+#' where the dataset is located. 
 #' @param name The name of the group in the HDF5 file.
 #' @param columns the names of the columns, 
 #' see \link[HDF5DataFrame]{HDF5ColumnVector}
@@ -23,7 +23,7 @@ setClass("HDF5DataFrame",
 #' The HDF5ColumnSeed class for \link[HDF5DataFrame]{HDF5ColumnVector}.
 #'
 #' @param path The path (as a single string or H5File object) to the HDF5 file 
-#' (.h5 or .h5ad) where the dataset is located. 
+#' where the dataset is located. 
 #' @param name The name of the dataset in the HDF5 file.
 #' @param column the names of the columns, 
 #' see \link[HDF5DataFrame]{HDF5ColumnVector}

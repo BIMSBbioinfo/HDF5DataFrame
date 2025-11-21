@@ -20,7 +20,7 @@
 #' library(HDF5DataFrame)
 #' 
 #' # h5
-#' output_h5ad <- tempfile(fileext = ".h5")
+#' output_hdf5 <- tempfile(fileext = ".h5")
 #' 
 #' # data
 #' data("chickwts")
@@ -28,7 +28,7 @@
 #' 
 #' # write data frame to HDF5  
 #' metadata_large <- writeHDF5DataFrame(metadata, 
-#'                                      filepath = output_h5ad, 
+#'                                      filepath = output_hdf5, 
 #'                                      name = "metadata", 
 #'                                      replace = TRUE)
 #'                                      

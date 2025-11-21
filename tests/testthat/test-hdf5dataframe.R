@@ -10,7 +10,7 @@ output_h5ad <- tempfile(fileext = ".h5")
 data("chickwts")
 metadata <- chickwts
 metadata2 <- chickwts
-names(metadata2) <- paste0("new", names(metadata2))
+# names(metadata2) <- paste0("new", names(metadata2))
 
 test_that("create metadata", {
   

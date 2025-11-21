@@ -6,7 +6,7 @@
 \title{HDF5DataFrame Class}
 \arguments{
 \item{path}{The path (as a single string or H5File object) to the HDF5 file 
-(.h5 or .h5ad) where the dataset is located.}
+where the dataset is located.}
 
 \item{name}{The name of the group in the HDF5 file.}
 
