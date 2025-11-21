@@ -1,6 +1,7 @@
 # HDF5DataFrame
 
-HDF5-backed DataFrame objects and methods.
+HDF5DataFrame is an R/Bioconductor package for HDF5-backed DataFrame objects 
+and methods. 
 
 ## Installation
 

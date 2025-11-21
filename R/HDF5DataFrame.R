@@ -322,7 +322,6 @@ cbind.HDF5DataFrame <- function(..., deparse.level=1) {
     if (!preserved) {
         for (i in seq_along(objects)) {
             obj <- objects[[i]]
-            print(obj)
             if (methods::is(obj, "HDF5DataFrame")) {
                 objects[[i]] <- .collapse_to_df(obj)
             }

@@ -13,20 +13,24 @@ vignette: |
   %\VignetteEncoding{UTF-8}
 ---
 
-# Introduction
-
-HDF5-backed DataFrame objects and methods. 
-
 ```{r load-libs}
 library(rhdf5)
 library(HDF5Array)
 library(HDF5DataFrame)
 ```
 
+# Introduction
+
+`r Biocpkg("HDF5DataFrame")` is an R/Bioconductor package for HDF5-backed 
+DataFrame objects and methods. Each column of a data frame is stored 
+as a separate one dimensional array in an HDF5 file. 
+`r Biocpkg("HDF5DataFrame")` organizes these arrays and serves them 
+as a `DataFrame`-like object.
+
 # Installation
 
 You can install `r Biocpkg("HDF5DataFrame")` from Bioconductor using 
-**BiocManager**:
+`r CRANpkg("BiocManager")`:
 
 ```{r bioc, eval=FALSE}
 if (!requireNamespace("BiocManager", quietly = TRUE)) {
@@ -35,30 +39,19 @@ if (!requireNamespace("BiocManager", quietly = TRUE)) {
 BiocManager::install("HDF5DataFrame")
 ```
 
-Or you can install the development version of `r Biocpkg("HDF5DataFrame")` 
-from GitHub like so:
-
-```{r devtools, eval=FALSE}
-if (!require("devtools", quietly = TRUE))
-    install.packages("devtools")
-devtools::install_github("BIMSBbioinfo/HDF5DataFrame")
-```
-
 # Usage
 
-The main usage of the HDF5DataFrame is to deliver DelayedArray 
-operations for DataFrames
+We use `writeHDF5DataFrame` to write the a `data.frame` to an HDF5 file.
+You can also specify the HDF5 group (`name`) where columns of the data frame
+are stored.
 
 ```{r read}
-
-# create h5 and a group for the hdf5 backed data frames
-output_h5ad <- tempfile(fileext = ".h5")
-
 # data
 data("chickwts")
 metadata <- chickwts
 
 # create HDF5DataFrame and write to hdf5
+output_h5ad <- tempfile(fileext = ".h5")
 metadata_hdf5 <- writeHDF5DataFrame(metadata,
                                     filepath = output_h5ad, 
                                     name = "metadata",
@@ -70,11 +63,18 @@ metadata_hdf5
 
 # Methods
 
+You can use various `DataFrame` methods on `HDF5DataFrame` objects such as 
+`cbind` where an in-memory `data.frame` can be combined with the `HDF5DataFrame`
+object. 
+
 ```{r methods}
 # cbind with in memory data
 metadata_hdf5 <- cbind(metadata_hdf5, metadata)
 metadata_hdf5
 ```
+
+You can also realize the `HDF5DataFrame` object into an in-memory 
+`data.frame` any time.
 
 ```{r methods2}
 # coerce to data.frame
