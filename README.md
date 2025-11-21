@@ -12,11 +12,3 @@ if (!requireNamespace("BiocManager", quietly = TRUE)) {
 }
 BiocManager::install("HDF5DataFrame")
 ```
-
-Or you can install the development version of **{HDF5DataFrame}** from GitHub like so:
-
-``` r
-if (!require("devtools", quietly = TRUE))
-    install.packages("devtools")
-devtools::install_github("BIMSBbioinfo/HDF5DataFrame")
-```
