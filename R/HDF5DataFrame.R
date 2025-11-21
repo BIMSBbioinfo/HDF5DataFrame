@@ -22,6 +22,8 @@
 #'
 #' @importFrom methods new as is callNextMethod
 #' @importFrom DelayedArray path
+#' @importFrom HDF5Array HDF5Array
+#' 
 #' @return A HDF5DataFrame object where each column is a 
 #' \link[HDF5DataFrame]{HDF5ColumnVector}.
 #'
@@ -92,7 +94,7 @@ HDF5DataFrame <- function(filepath, name, columns = NULL) {
   .check_dataframe_dim(filepath, name)
   
   # get attributes
-  nrows <- dim(HDF5Array(filepath = filepath, 
+  nrows <- dim(HDF5Array::HDF5Array(filepath = filepath, 
                            name = file.path(name, columns[1])))[1]
 
   # HDF5DataFrame

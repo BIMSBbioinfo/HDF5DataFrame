@@ -11,6 +11,7 @@
 #' @param replace replace
 #'
 #' @importFrom rhdf5 h5createFile h5createGroup
+#' @importFrom HDF5Array writeHDF5Array
 #'
 #' @examples
 #' # libraries
@@ -66,7 +67,7 @@ writeHDF5DataFrame <- function(x,
       cur_column <- as.character(cur_column)
     cur_column <- as.array(cur_column)
     meta.data_list[[colnames(x)[i]]] <- 
-      writeHDF5Array(cur_column, 
+      HDF5Array::writeHDF5Array(cur_column, 
                      filepath, 
                      name = file.path(name, colnames(x)[i]), 
                      with.dimnames = FALSE)

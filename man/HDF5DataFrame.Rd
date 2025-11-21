@@ -13,9 +13,6 @@
 \alias{[[,HDF5DataFrame-method}
 \alias{[[<-,HDF5DataFrame-method}
 \alias{nrow,HDF5DataFrame-method}
-\alias{names<-,HDF5DataFrame,ANY-method}
-\alias{[[,HDF5DataFrame,ANY,ANY-method}
-\alias{[[<-,HDF5DataFrame,ANY,ANY,ANY-method}
 \title{HDF5-backed DataFrame}
 \usage{
 HDF5DataFrame(filepath, name, columns = NULL)
@@ -32,11 +29,11 @@ HDF5DataFrame(filepath, name, columns = NULL)
 
 \S4method{rownames}{HDF5DataFrame}(x) <- value
 
-\S4method{names}{HDF5DataFrame,ANY}(x) <- value
+\S4method{names}{HDF5DataFrame}(x) <- value
 
-\S4method{[[}{HDF5DataFrame,ANY,ANY}(x, i, j, ...)
+\S4method{[[}{HDF5DataFrame}(x, i, j, ...)
 
-\S4method{[[}{HDF5DataFrame,ANY,ANY,ANY}(x, i, j, ...) <- value
+\S4method{[[}{HDF5DataFrame}(x, i, j, ...) <- value
 
 \S4method{cbind}{HDF5DataFrame}(..., deparse.level = 1)
 

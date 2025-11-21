@@ -3,6 +3,7 @@
   is.logical(x) && length(x) == 1L && !is.na(x)
 }
 
+#' @importFrom rhdf5 h5ls
 #' @noRd
 h5lsgroup <- function(filepath, name) {
   
@@ -25,10 +26,12 @@ h5lsgroup <- function(filepath, name) {
   return(all_objs_group)
 }
 
+#' @importFrom HDF5Array HDF5Array
+#' @noRd
 .check_dataframe_dim <- function(filepath, name){
   group_metadata <- h5lsgroup(filepath, name)
   dim_ds <- lapply(seq_len(nrow(group_metadata)), function(i){
-    dim(HDF5Array(filepath = filepath, 
+    dim(HDF5Array::HDF5Array(filepath = filepath, 
                   name = file.path(name, group_metadata$name[i])))
   })
   if(length(unique(dim_ds)) > 1 || all(lapply(dim_ds, length) > 1))
