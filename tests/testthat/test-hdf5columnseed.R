@@ -9,8 +9,6 @@ output_h5ad <- tempfile(fileext = ".h5")
 # data
 data("chickwts")
 metadata <- chickwts
-metadata2 <- chickwts
-names(metadata2) <- paste0("new", names(metadata2))
 
 test_that("hdf5columnseed", {
   
