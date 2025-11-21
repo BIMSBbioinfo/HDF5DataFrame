@@ -87,22 +87,51 @@
 #' 
 #' @export
 #' @return HDF5DataFrame object
-HDF5DataFrame <- function(x, name, columns=NULL, nrows=NULL) {
-    if (is.null(columns) || is.null(nrows)) {
-        if (is.null(columns)) {
-            columns <- names(x)
-        }
-        if (is.null(nrows)) {
-            nrows <- length(x[[1]])
-        }
-    } 
-    path <- DelayedArray::path(x[[1]])
-    name <- dirname(x[[1]]@seed@name)
-    methods::new("HDF5DataFrame", 
-                 path=path, 
-                 name = name, 
-                 columns=columns, 
-                 nrows=nrows)
+HDF5DataFrame <- function(filepath, name, columns = NULL) {
+
+  # get columns
+  h5groups <- h5lsgroup(filepath, name)
+  h5columns <- h5groups$name
+  if(!is.null(columns)){
+    columns <- columns[columns %in% h5columns]
+    if(length(columns) == 0)
+      stop("No valid columns found in HDF5DataFrame at '", 
+           name, "' in file '", filepath, "'.")
+  } else {
+    columns <- h5columns
+  }
+
+  # check dataframe
+  .check_dataframe_dim(filepath, name)
+  
+  # get attributes
+  nrows <- dim(HDF5Array(filepath = filepath, 
+                           name = file.path(name, columns[1])))[1]
+
+  # HDF5DataFrame
+  methods::new("HDF5DataFrame",
+               path=filepath,
+               name = name,
+               columns=columns,
+               nrows=nrows)
+}
+
+HDF5DataFrame_old <- function(x, name, columns=NULL, nrows=NULL) {
+  if (is.null(columns) || is.null(nrows)) {
+    if (is.null(columns)) {
+      columns <- names(x)
+    }
+    if (is.null(nrows)) {
+      nrows <- length(x[[1]])
+    }
+  }
+  path <- DelayedArray::path(x[[1]])
+  name <- dirname(x[[1]]@seed@name)
+  methods::new("HDF5DataFrame",
+               path=path,
+               name = name,
+               columns=columns,
+               nrows=nrows)
 }
 
 .DollarNames.HDF5DataFrame <- function(x, pattern = "")

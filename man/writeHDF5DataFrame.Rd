@@ -13,7 +13,8 @@ writeHDF5DataFrame(x, filepath, name, replace)
 (new or existing) HDF5 file where to write the dataset. 
 See \link[HDF5Array]{writeHDF5Array}}
 
-\item{name}{NULL or the name of the HDF5 dataset to write.}
+\item{name}{NULL or the name of the HDF5 group to write columns of the 
+dataset.}
 
 \item{replace}{replace}
 }

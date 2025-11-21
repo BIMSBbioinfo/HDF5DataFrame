@@ -6,7 +6,8 @@
 #' @param filepath NULL or the path (as a single string) to the 
 #' (new or existing) HDF5 file where to write the dataset. 
 #' See \link[HDF5Array]{writeHDF5Array}
-#' @param name NULL or the name of the HDF5 dataset to write. 
+#' @param name NULL or the name of the HDF5 group to write columns of the 
+#' dataset.
 #' @param replace replace
 #'
 #' @importFrom rhdf5 h5createFile h5createGroup
@@ -40,6 +41,7 @@ writeHDF5DataFrame <- function(x,
   
   # write data frame
   meta.data_list <- list()
+  columns <- colnames(x)
   for(i in 1:ncol(x)){
     cur_column <- as.vector(subset(x, select = colnames(x)[i]))[[1]]
     if(is.character(cur_column) || is.factor(cur_column))
@@ -53,7 +55,8 @@ writeHDF5DataFrame <- function(x,
   }
   
   # return data frame
-  HDF5DataFrame(meta.data_list, 
-                name = name, 
-                columns = names(meta.data_list))
+  # HDF5DataFrame(meta.data_list, 
+  #               name = name, 
+  #               columns = names(meta.data_list))
+  HDF5DataFrame2(filepath, name, columns = columns)
 }
