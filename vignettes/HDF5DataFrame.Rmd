@@ -108,8 +108,8 @@ object.
 
 ```{r methods}
 # cbind with in memory data
-df_hdf5 <- cbind(df_hdf5, df)
-df_hdf5
+df_hdf5_bind <- cbind(df_hdf5, df)
+df_hdf5_bind
 ```
 
 Indexing in `HDF5DataFrame` is performed lazily without loading the data in the
@@ -156,8 +156,9 @@ You can also realize the `HDF5DataFrame` object into an in-memory
 `data.frame` any time.
 
 ```{r methods2}
-as.data.frame(df_hdf5)
-as(df_hdf5, "data.frame")
+a <- as.data.frame(df_hdf5)
+a <- as(df_hdf5, "data.frame")
+head(a)
 ```
 
 # Session info

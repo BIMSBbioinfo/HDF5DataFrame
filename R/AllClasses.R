@@ -8,15 +8,14 @@
 #' @param name The name of the group in the HDF5 file.
 #' @param columns the names of the columns, 
 #' see \link[HDF5DataFrame]{HDF5ColumnVector}
-#' @param nrows the number of rows of the DataFrame.
 #'
 #' @exportClass HDF5DataFrame
 setClass("HDF5DataFrame", 
          contains="DataFrame",
          slots=c(path="character", 
                  name = "character", 
-                 columns="character", 
-                 nrows="integer"))
+                 columns="character")) 
+                 # nrows="integer"))
 
 #' HDF5ColumnSeed Class
 #' 

@@ -12,8 +12,6 @@ where the dataset is located.}
 
 \item{columns}{the names of the columns, 
 see \link[HDF5DataFrame]{HDF5ColumnVector}}
-
-\item{nrows}{the number of rows of the DataFrame.}
 }
 \description{
 The HDF5DataFrame class is a DataFrame subclass for representing datasets 

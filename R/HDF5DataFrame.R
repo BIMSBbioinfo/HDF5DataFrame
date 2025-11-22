@@ -1,3 +1,7 @@
+####
+# Constructor ####
+####
+
 #' HDF5-backed DataFrame
 #'
 #' Create a HDF5-backed \link[S4Vectors]{DataFrame}, where the data are 
@@ -65,8 +69,7 @@
 #'                                      name = "metadata",
 #'                                      replace = TRUE)
 #'                                      
-#' metadata_large <- HDF5DataFrame(filepath = output_hdf5, 
-#'                                 name = "metadata")                              
+#' metadata_large <- HDF5DataFrame(filepath = output_hdf5, name = "metadata")
 #' 
 #' # coerce to data.frame
 #' metadata_large <- as.data.frame(metadata_large)
@@ -101,8 +104,7 @@ HDF5DataFrame <- function(filepath, name = "", columns = NULL) {
   methods::new("HDF5DataFrame",
                path=filepath,
                name = name,
-               columns=columns,
-               nrows=nrows)
+               columns=columns)
 }
 
 HDF5DataFrame_old <- function(x, name, columns=NULL, nrows=NULL) {
@@ -119,17 +121,20 @@ HDF5DataFrame_old <- function(x, name, columns=NULL, nrows=NULL) {
   methods::new("HDF5DataFrame",
                path=path,
                name = name,
-               columns=columns,
-               nrows=nrows)
+               columns=columns)
 }
 
+####
+# Methods ####
+####
+
 .DollarNames.HDF5DataFrame <- function(x, pattern = "")
-  grep(pattern, x@columns, value=TRUE)
+  grep(pattern, names(x), value=TRUE)
 
 #' @rdname HDF5DataFrame
 #' @export
 #' @return number of rows of HDF5DataFrame object
-setMethod("nrow", "HDF5DataFrame", function(x) x@nrows)
+setMethod("nrow", "HDF5DataFrame", function(x) length(x[[1]]))
 
 #' @rdname HDF5DataFrame
 #' @export
@@ -210,7 +215,7 @@ setMethod("extractCOLS", "HDF5DataFrame", function(x, i) {
     if (!missing(i)) {
         xstub <- setNames(seq_along(x), names(x))
         i <- normalizeSingleBracketSubscript(i, xstub)
-        x@columns <- x@columns[i]
+        x@columns <- names(x)[i]
         x@elementMetadata <- extractROWS(x@elementMetadata, i)
     }
     x
@@ -231,7 +236,7 @@ setMethod("[[", "HDF5DataFrame", function(x, i, j, ...) {
     }
 
     i <- normalizeDoubleBracketSubscript(i, x)
-    HDF5ColumnVector(x@path, column=x@columns[i], name = x@name)
+    HDF5ColumnVector(path(x), column=names(x)[i], name = x@name)
 })
 
 #' @rdname subsetting-utils
@@ -251,8 +256,8 @@ setMethod("replaceCOLS", "HDF5DataFrame", function(x, i, value) {
     i2 <- normalizeSingleBracketSubscript(i, xstub, allow.NAs=TRUE)
     if (length(i2) == 1L && !is.na(i2)) {
         if (methods::is(value, "HDF5DataFrame")) {
-            if (x@path == value@path && 
-                identical(x@columns[i2], value@columns)) {
+            if (path(x) == value@path && 
+                identical(names(x)[i2], value@columns)) {
                 return(x)
             }
         }
@@ -271,8 +276,8 @@ setMethod("[[<-", "HDF5DataFrame", function(x, i, j, ..., value) {
     i2 <- normalizeDoubleBracketSubscript(i, x, allow.nomatch=TRUE)
     if (length(i2) == 1L && !is.na(i2)) {
         if (methods::is(value, "HDF5ColumnVector")) {
-            if (x@path == value@seed@path && 
-                x@columns[i2] == value@seed@column) {
+            if (path(x) == value@seed@path && 
+                names(x)[i2] == value@seed@column) {
                 return(x)
             }
         }
@@ -380,19 +385,23 @@ setMethod("cbind", "HDF5DataFrame", cbind.HDF5DataFrame)
 #' @importFrom S4Vectors make_zero_col_DFrame 
 #' @importFrom S4Vectors mcols mcols<- metadata metadata<-
 .collapse_to_df <- function(x) {
-  df <- make_zero_col_DFrame(x@nrows)
-  for (i in seq_along(x@columns)) {
+  df <- make_zero_col_DFrame(nrow(x))
+  for (i in seq_along(names(x))) {
     df[[as.character(i)]] <- 
-      HDF5ColumnVector(x@path, 
+      HDF5ColumnVector(path(x), 
                        x@name, 
-                       column=x@columns[i], 
-                       length = x@nrows)
+                       column = names(x)[i],
+                       length = nrow(x))
   }
-  colnames(df) <- x@columns
+  colnames(df) <- names(x)
   mcols(df) <- mcols(x, use.names=FALSE)
   metadata(df) <- metadata(x)
   df
 }
+
+####
+# Coercion ####
+####
 
 #' @rdname HDF5DataFrame
 #' @importFrom h5mread h5mread
@@ -401,13 +410,13 @@ setMethod("cbind", "HDF5DataFrame", cbind.HDF5DataFrame)
 setMethod("as.data.frame", 
           "HDF5DataFrame", 
           function(x, row.names = NULL, optional = FALSE, ...) {
-            df <- make_zero_col_DFrame(x@nrows)
-            for (i in seq_along(x@columns)) {
+            df <- make_zero_col_DFrame(nrow(x))
+            for (i in seq_along(names(x))) {
               df[[as.character(i)]] <- 
-                h5mread::h5mread(filepath = x@path, 
-                                 name = paste0(x@name, "/", x@columns[i]))
+                h5mread::h5mread(filepath = path(x), 
+                                 name = paste0(x@name, "/", names(x[i])))
             }
-            colnames(df) <- x@columns
+            colnames(df) <- names(x)
             mcols(df) <- mcols(x, use.names=FALSE)
             metadata(df) <- metadata(x)
             as.data.frame(df)
