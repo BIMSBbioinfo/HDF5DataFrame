@@ -15,7 +15,7 @@
 \alias{nrow,HDF5DataFrame-method}
 \title{HDF5-backed DataFrame}
 \usage{
-HDF5DataFrame(filepath, name, columns = NULL)
+HDF5DataFrame(filepath, name = "", columns = NULL)
 
 \S4method{nrow}{HDF5DataFrame}(x)
 

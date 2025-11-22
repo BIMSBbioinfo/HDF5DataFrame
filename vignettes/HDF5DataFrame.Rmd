@@ -25,7 +25,10 @@ library(HDF5DataFrame)
 DataFrame objects and methods. Each column of a data frame is stored 
 as a separate one dimensional array in an HDF5 file. 
 `r Biocpkg("HDF5DataFrame")` organizes these arrays and serves them 
-as a `DataFrame`-like object.
+as a `DataFrame`-like object. Common data frame methods such as 
+subsetting and column binding in `HDF5DataFrame` are memory-efficient, thus
+these operations are performed lazily, making it suitable for dealing with 
+large datasets.
 
 # Installation
 
@@ -39,50 +42,65 @@ if (!requireNamespace("BiocManager", quietly = TRUE)) {
 BiocManager::install("HDF5DataFrame")
 ```
 
-# Usage
+# HDF5DataFrame
 
-We use `writeHDF5DataFrame` to write the a `data.frame` to an HDF5 file.
+We use `writeHDF5DataFrame` to write a `data.frame` to an HDF5 file.
 You can also specify the HDF5 group (`name`) where columns of the data frame
 are stored.
 
 ```{r read}
 # data
 data("chickwts")
-metadata <- chickwts
+df <- chickwts
 
-# create HDF5DataFrame and write to hdf5
-output_hdf5 <- tempfile(fileext = ".h5")
-metadata_hdf5 <- writeHDF5DataFrame(metadata,
-                                    filepath = output_hdf5, 
-                                    name = "metadata",
-                                    replace = TRUE)
-
-# view HDF5DataFrame
-metadata_hdf5
+# create HDF5 and write an HDF5DataFrame
+hdf5_file <- tempfile(fileext = ".h5")
+df_hdf5 <- writeHDF5DataFrame(df, filepath = hdf5_file)
+df_hdf5
 ```
 
 The `path` method points to the HDF5 file where the data frame is stored. 
 
 ```{r path}
-path(metadata_hdf5)
+path(df_hdf5)
 ```
 
 Each column is stored as a separate one dimensional dataset in the HDF5 file.
-Here `metadata` is the group that contains each array with the same length. 
 
 ```{r h5ls}
-h5ls(output_hdf5)
+h5ls(hdf5_file)
 ```
 
-If the HDF5 file already contains a data frame at the specified group with
-known name, you can construct an `HDF5DataFrame` object directly
+If the HDF5 file already contains a set of one-dimensional arrays with same 
+length, one can construct an `HDF5DataFrame` object directly. 
 
 ```{r HDF5DataFrame}
-metadata_hdf5 <- HDF5DataFrame(filepath = output_hdf5,
-                               name = "metadata")
+df_hdf5 <- HDF5DataFrame(filepath = hdf5_file)
+df_hdf5
 ```
 
-# Methods
+`r Biocpkg("HDF5DataFrame")` can also be written to a group under an HDF5 file.
+We use the `name` arguement to specify the group, 
+thus `r Biocpkg("HDF5DataFrame")` can be used along with other groups and 
+arrays within the same HDF5 file.
+
+```{r group}
+hdf5_file <- tempfile(fileext = ".h5")
+df_hdf5 <- writeHDF5DataFrame(df, 
+                              filepath = hdf5_file, 
+                              name = "df",
+                              replace = TRUE)
+df_hdf5
+```
+
+Now if we list the datasets in the HDF5 file, DataFrame columns are stored 
+under the `df` group.
+
+```{r h5lsgroup}
+h5ls(hdf5_file)
+```
+
+# HDF5DataFrame Methods
 
 You can use various `DataFrame` methods on `HDF5DataFrame` objects such as 
 `cbind` where an in-memory `data.frame` can be combined with the `HDF5DataFrame`
@@ -90,17 +108,56 @@ object.
 
 ```{r methods}
 # cbind with in memory data
-metadata_hdf5 <- cbind(metadata_hdf5, metadata)
-metadata_hdf5
+df_hdf5 <- cbind(df_hdf5, df)
+df_hdf5
+```
+
+Indexing in `HDF5DataFrame` is performed lazily without loading the data in the
+memory. 
+
+```{r lazy}
+df_hdf5[1:10, ]
+```
+
+All variations of indexing can also be performed on `HDF5DataFrame` objects.
+
+```{r lazy_other}
+df_hdf5[1:10, 1:2]
+df_hdf5[1:10, 1, drop = FALSE]
+```
+
+Selecting a single column would return the `HDF5ColumnVector` object dedicated
+to represent a single array of `HDF5DataFrame` saved in HDF5 file, which 
+can also be loaded in memory at any time.
+
+```{r lazy_other2}
+df_hdf5[, 1]
+df_hdf5[["weight"]]
+as.vector(df_hdf5[["weight"]])
+```
+
+# Coercion 
+
+Coercion methods between `HDF5DataFrame` and other data structures are defined. 
+
+* from vector 
+
+```{r coercion}
+as(df[["weight"]], "HDF5DataFrame")
+```
+
+* from list
+
+```{r coercion2}
+as(list(a=1:5, b=6:10), "HDF5DataFrame")
 ```
 
 You can also realize the `HDF5DataFrame` object into an in-memory 
 `data.frame` any time.
 
 ```{r methods2}
-# coerce to data.frame
-metadata_hdf5 <- as.data.frame(metadata_hdf5)
-head(metadata_hdf5)
+as.data.frame(df_hdf5)
+as(df_hdf5, "data.frame")
 ```
 
 # Session info

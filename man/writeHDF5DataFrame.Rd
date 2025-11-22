@@ -4,7 +4,7 @@
 \alias{writeHDF5DataFrame}
 \title{writeHDF5DataFrame}
 \usage{
-writeHDF5DataFrame(x, filepath, name, replace)
+writeHDF5DataFrame(x, filepath, name = "", replace = FALSE)
 }
 \arguments{
 \item{x}{data.frame}
@@ -40,7 +40,6 @@ metadata <- chickwts
 # write data frame to HDF5  
 metadata_large <- writeHDF5DataFrame(metadata, 
                                      filepath = output_hdf5, 
-                                     name = "metadata", 
-                                     replace = TRUE)
+                                     name = "metadata")
                                      
 }

@@ -29,15 +29,14 @@
 #' # write data frame to HDF5  
 #' metadata_large <- writeHDF5DataFrame(metadata, 
 #'                                      filepath = output_hdf5, 
-#'                                      name = "metadata", 
-#'                                      replace = TRUE)
+#'                                      name = "metadata")
 #'                                      
 #' @export
 #' @return HDF5DataFrame object                                    
 writeHDF5DataFrame <- function(x, 
                                filepath, 
-                               name, 
-                               replace){
+                               name = "", 
+                               replace = FALSE){
   
   # create or replace output folder
   if (!.isTRUEorFALSE(replace)) {
@@ -62,7 +61,12 @@ writeHDF5DataFrame <- function(x,
   meta.data_list <- list()
   columns <- colnames(x)
   for(i in seq_len(ncol(x))){
-    cur_column <- as.vector(subset(x, select = colnames(x)[i]))[[1]]
+    cur_column <- subset(x, select = colnames(x)[i])
+    if(is.data.frame(cur_column)){
+      cur_column <- as.vector(cur_column)[[1]]
+    } else {
+      cur_column <- cur_column[[1]]
+    }
     if(is.character(cur_column) || is.factor(cur_column))
       cur_column <- as.character(cur_column)
     cur_column <- as.array(cur_column)

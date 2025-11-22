@@ -76,7 +76,7 @@
 #' 
 #' @export
 #' @return HDF5DataFrame object
-HDF5DataFrame <- function(filepath, name, columns = NULL) {
+HDF5DataFrame <- function(filepath, name = "", columns = NULL) {
 
   # get columns
   h5groups <- h5lsgroup(filepath, name)
@@ -380,18 +380,18 @@ setMethod("cbind", "HDF5DataFrame", cbind.HDF5DataFrame)
 #' @importFrom S4Vectors make_zero_col_DFrame 
 #' @importFrom S4Vectors mcols mcols<- metadata metadata<-
 .collapse_to_df <- function(x) {
-    df <- make_zero_col_DFrame(x@nrows)
-    for (i in seq_along(x@columns)) {
-        df[[as.character(i)]] <- 
-          HDF5ColumnVector(x@path, 
-                           x@name, 
-                           column=x@columns[i], 
-                           length = x@nrows)
-    }
-    colnames(df) <- x@columns
-    mcols(df) <- mcols(x, use.names=FALSE)
-    metadata(df) <- metadata(x)
-    df
+  df <- make_zero_col_DFrame(x@nrows)
+  for (i in seq_along(x@columns)) {
+    df[[as.character(i)]] <- 
+      HDF5ColumnVector(x@path, 
+                       x@name, 
+                       column=x@columns[i], 
+                       length = x@nrows)
+  }
+  colnames(df) <- x@columns
+  mcols(df) <- mcols(x, use.names=FALSE)
+  metadata(df) <- metadata(x)
+  df
 }
 
 #' @rdname HDF5DataFrame
@@ -401,17 +401,40 @@ setMethod("cbind", "HDF5DataFrame", cbind.HDF5DataFrame)
 setMethod("as.data.frame", 
           "HDF5DataFrame", 
           function(x, row.names = NULL, optional = FALSE, ...) {
-  df <- make_zero_col_DFrame(x@nrows)
-  for (i in seq_along(x@columns)) {
-    df[[as.character(i)]] <- 
-      h5mread::h5mread(filepath = x@path, 
-                       name = paste0(x@name, "/", x@columns[i]))
-  }
-  colnames(df) <- x@columns
-  mcols(df) <- mcols(x, use.names=FALSE)
-  metadata(df) <- metadata(x)
-  as.data.frame(df)
-})
+            df <- make_zero_col_DFrame(x@nrows)
+            for (i in seq_along(x@columns)) {
+              df[[as.character(i)]] <- 
+                h5mread::h5mread(filepath = x@path, 
+                                 name = paste0(x@name, "/", x@columns[i]))
+            }
+            colnames(df) <- x@columns
+            mcols(df) <- mcols(x, use.names=FALSE)
+            metadata(df) <- metadata(x)
+            as.data.frame(df)
+          })
 
 #' @export
 setAs("HDF5DataFrame", "DFrame", function(from) .collapse_to_df(from))
+setAs("HDF5DataFrame", "DataFrame", function(from) .collapse_to_df(from))
+
+#' @noRd
+.from_DataFrame_to_HDF5DataFrame <- function(from, to="DFrame")
+{
+  output_hdf5 <- tempfile(fileext = ".h5")
+  writeHDF5DataFrame(from, 
+                     filepath = output_hdf5, 
+                     name = "",
+                     replace = TRUE)
+}
+
+#' @export
+setAs("DataFrame", "HDF5DataFrame", .from_DataFrame_to_HDF5DataFrame)
+
+#' @export
+setAs("DFrame", "HDF5DataFrame", .from_DataFrame_to_HDF5DataFrame)
+
+#' @export
+setAs("ANY", "HDF5DataFrame", function(from){
+  df <- as(from, "DataFrame")
+  as(df, "HDF5DataFrame")
+})
