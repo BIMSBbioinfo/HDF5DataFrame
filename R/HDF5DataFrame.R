@@ -369,7 +369,7 @@ cbind.HDF5DataFrame <- function(..., deparse.level=1) {
         methods::new("HDF5DataFrame", 
             path=xpath,
             columns=all_columns,
-            nrows=NROW(objects[[1]]),
+            # nrows=NROW(objects[[1]]),
             elementMetadata=all_mcols,
             metadata=do.call(c, all_metadata)
         )
