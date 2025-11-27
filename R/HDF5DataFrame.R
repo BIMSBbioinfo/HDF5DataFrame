@@ -107,23 +107,6 @@ HDF5DataFrame <- function(filepath, name = "", columns = NULL) {
                columns=columns)
 }
 
-HDF5DataFrame_old <- function(x, name, columns=NULL, nrows=NULL) {
-  if (is.null(columns) || is.null(nrows)) {
-    if (is.null(columns)) {
-      columns <- names(x)
-    }
-    if (is.null(nrows)) {
-      nrows <- length(x[[1]])
-    }
-  }
-  path <- DelayedArray::path(x[[1]])
-  name <- dirname(x[[1]]@seed@name)
-  methods::new("HDF5DataFrame",
-               path=path,
-               name = name,
-               columns=columns)
-}
-
 ####
 # Methods ####
 ####
