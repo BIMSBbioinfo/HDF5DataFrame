@@ -95,10 +95,6 @@ HDF5DataFrame <- function(filepath, name = "", columns = NULL) {
 
   # check dataframe
   .check_dataframe_dim(filepath, name)
-  
-  # get attributes
-  nrows <- dim(HDF5Array::HDF5Array(filepath = filepath, 
-                           name = file.path(name, columns[1])))[1]
 
   # HDF5DataFrame
   methods::new("HDF5DataFrame",
