@@ -1,12 +1,11 @@
 Package: HDF5DataFrame
-Version: 0.99.1
+Version: 0.99.2
 Date: 2025-04-23
 Title: HDF5-backed DataFrame objects and methods
 Description: 
-    Implements bindings for h5 files that are compatible with Bioconductor
-    S4 data structures, namely the DataFrame and DelayedArray. This allows 
-    HDF5-backed data to be easily used as data frames with arbitrary sets 
-    of columns.
+    HDF5DataFrame is an R/Bioconductor package for HDF5-backed DataFrame objects 
+    and methods. This allows HDF5-backed data to be easily used as data frames 
+    with arbitrary sets of columns.
 Authors@R: 
 	person("Artür", "Manukyan", 
 		     role=c("aut", "cre", "fnd"),
