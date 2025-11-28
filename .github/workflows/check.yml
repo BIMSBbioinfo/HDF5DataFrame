@@ -44,6 +44,31 @@ jobs:
           r-version: ${{ matrix.config.r }}
           rtools-version: ${{ matrix.config.rtools-version }}
           
+      ## linux dependencies
+      - name: Install linux system dependencies
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get install -y libgdal-dev 
+          sudo apt-get install -y libfftw3-dev 
+          sudo apt-get install -y libmagick++-dev 
+          sudo apt-get install -y cmake 
+          sudo apt-get install -y libhdf5-dev 
+          sudo apt-get install -y git 
+          sudo apt-get install -y libopencv-dev 
+          sudo apt-get install -y libopencv-features2d-dev  
+          sudo apt-get install -y libssl-dev 
+          sudo apt-get install -y libcurl4-openssl-dev 
+          sudo apt-get install -y libgit2-dev 
+          sudo apt-get install -y libxml2-dev 
+          sudo apt-get install -y libfontconfig1-dev 
+          sudo apt-get install -y libharfbuzz-dev 
+          sudo apt-get install -y libfribidi-dev 
+          sudo apt-get install -y libfreetype6-dev 
+          sudo apt-get install -y libpng-dev 
+          sudo apt-get install -y libtiff5-dev 
+          sudo apt-get install -y libjpeg-dev 
+          sudo apt-get install -y libz-dev
+        
       ## remotes, devtools
       - name: Query dependencies
         run: |
