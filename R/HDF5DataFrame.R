@@ -95,12 +95,17 @@ HDF5DataFrame <- function(filepath, name = "", columns = NULL) {
 
   # check dataframe
   .check_dataframe_dim(filepath, name)
-
+  
+  # get attributes
+  nrows <- dim(HDF5Array::HDF5Array(filepath = filepath, 
+                                    name = file.path(name, columns[1])))[1]
+  
   # HDF5DataFrame
   methods::new("HDF5DataFrame",
                path=filepath,
                name = name,
-               columns=columns)
+               columns=columns,
+               nrows=nrows)
 }
 
 ####
@@ -348,7 +353,6 @@ cbind.HDF5DataFrame <- function(..., deparse.level=1) {
         methods::new("HDF5DataFrame", 
             path=xpath,
             columns=all_columns,
-            # nrows=NROW(objects[[1]]),
             elementMetadata=all_mcols,
             metadata=do.call(c, all_metadata)
         )
@@ -406,7 +410,7 @@ setAs("HDF5DataFrame", "DFrame", function(from) .collapse_to_df(from))
 setAs("HDF5DataFrame", "DataFrame", function(from) .collapse_to_df(from))
 
 #' @noRd
-.from_DataFrame_to_HDF5DataFrame <- function(from, to="DFrame")
+.from_DataFrame_to_HDF5DataFrame <- function(from)
 {
   output_hdf5 <- tempfile(fileext = ".h5")
   writeHDF5DataFrame(from, 

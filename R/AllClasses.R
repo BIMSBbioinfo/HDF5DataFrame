@@ -14,8 +14,8 @@ setClass("HDF5DataFrame",
          contains="DataFrame",
          slots=c(path="character", 
                  name = "character", 
-                 columns="character")) 
-                 # nrows="integer"))
+                 columns="character", 
+                 nrows="integer")) 
 
 #' HDF5ColumnSeed Class
 #' 

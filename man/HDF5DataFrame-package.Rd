@@ -5,7 +5,7 @@
 \alias{HDF5DataFrame-package}
 \title{HDF5DataFrame: HDF5-backed DataFrame objects and methods}
 \description{
-Implements bindings for h5 files that are compatible with Bioconductor S4 data structures, namely the DataFrame and DelayedArray. This allows HDF5-backed data to be easily used as data frames with arbitrary sets of columns.
+HDF5DataFrame is an R/Bioconductor package for HDF5-backed DataFrame objects and methods. This allows HDF5-backed data to be easily used as data frames with arbitrary sets of columns.
 }
 \seealso{
 Useful links:
