@@ -1,6 +1,6 @@
 Package: HDF5DataFrame
-Version: 0.99.2
-Date: 2025-04-23
+Version: 0.99.3
+Date: 2026-01-20
 Title: HDF5-backed DataFrame objects and methods
 Description: 
     HDF5DataFrame is an R/Bioconductor package for HDF5-backed DataFrame objects 
